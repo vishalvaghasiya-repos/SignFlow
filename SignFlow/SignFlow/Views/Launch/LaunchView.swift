@@ -12,7 +12,7 @@ struct LaunchView: View {
     @State private var contentOpacity: Double = 0
     @State private var ringRotation: Double = 0
     @State private var loadingPhase: CGFloat = 0
-    @State private var shimmerX: CGFloat = -160
+    @State private var shimmerX: CGFloat = 0
 
     var body: some View {
         ZStack {
@@ -28,12 +28,15 @@ struct LaunchView: View {
                 .ignoresSafeArea()
 
             Circle()
-                .stroke(Color.white.opacity(0.20), lineWidth: 2)
+                .stroke(Color.white.opacity(0.16), lineWidth: 2)
                 .frame(width: 250, height: 250)
                 .rotationEffect(.degrees(ringRotation))
                 .blur(radius: 0.5)
+                .offset(y: 60)
 
-            VStack(spacing: 22) {
+            VStack {
+                Spacer()
+                
                 ZStack {
                     RoundedRectangle(cornerRadius: 22, style: .continuous)
                         .fill(Color.white.opacity(0.06))
@@ -42,7 +45,7 @@ struct LaunchView: View {
                             RoundedRectangle(cornerRadius: 22, style: .continuous)
                                 .stroke(Color.white.opacity(0.15), lineWidth: 1)
                         }
-                        .offset(x: -54, y: -12)
+                        .offset(x: -54, y: -10)
                         .rotationEffect(.degrees(-9))
 
                     RoundedRectangle(cornerRadius: 22, style: .continuous)
@@ -50,19 +53,20 @@ struct LaunchView: View {
                         .frame(width: 170, height: 88)
                         .overlay {
                             RoundedRectangle(cornerRadius: 22, style: .continuous)
-                                .stroke(Color.white.opacity(0.2), lineWidth: 1)
+                                .stroke(Color.white.opacity(0.20), lineWidth: 1)
                         }
-                        .offset(x: 64, y: 10)
+                        .offset(x: 58, y: 8)
                         .rotationEffect(.degrees(8))
                 }
                 .opacity(contentOpacity * 0.82)
+                .padding(.bottom, 8)
 
                 ZStack {
-                    RoundedRectangle(cornerRadius: 28, style: .continuous)
+                    Circle()
                         .fill(.ultraThinMaterial)
                         .frame(width: 112, height: 112)
                         .overlay {
-                            RoundedRectangle(cornerRadius: 28, style: .continuous)
+                            Circle()
                                 .stroke(Color.white.opacity(0.35), lineWidth: 1)
                         }
                         .shadow(color: .black.opacity(0.18), radius: 20, x: 0, y: 12)
@@ -73,18 +77,25 @@ struct LaunchView: View {
                         .symbolRenderingMode(.hierarchical)
                 }
                 .scaleEffect(logoScale)
+                .padding(.top, 18)
 
-                VStack(spacing: 6) {
+                VStack(spacing: 8) {
                     Text(AppConstants.appDisplayName)
-                        .font(.system(.title2, design: .rounded).weight(.bold))
+                        .font(.system(size: 34, weight: .bold, design: .rounded))
                         .foregroundStyle(.white)
+                        .multilineTextAlignment(.center)
+
                     Text("Sign. Seal. Share.")
-                        .font(Theme.captionFont)
-                        .foregroundStyle(.white.opacity(0.85))
+                        .font(.system(size: 16, weight: .medium, design: .rounded))
+                        .foregroundStyle(.white.opacity(0.78))
                 }
+                .padding(.top, 10)
                 .opacity(contentOpacity)
 
+                Spacer(minLength: 120)
+
                 bottomLoader
+                    .padding(.bottom, 28)
                     .opacity(contentOpacity)
             }
             .padding(.horizontal, 24)
@@ -102,9 +113,6 @@ struct LaunchView: View {
             withAnimation(.easeInOut(duration: 0.9).repeatForever(autoreverses: true)) {
                 loadingPhase = 1
             }
-            withAnimation(.linear(duration: 1.15).repeatForever(autoreverses: false)) {
-                shimmerX = 160
-            }
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.95) {
                 onFinished()
             }
@@ -112,33 +120,16 @@ struct LaunchView: View {
     }
 
     private var bottomLoader: some View {
-        VStack(spacing: 10) {
-            Text("Loading workspace…")
-                .font(.system(.caption, design: .rounded).weight(.medium))
-                .foregroundStyle(.white.opacity(0.75))
-
-            ZStack(alignment: .leading) {
-                Capsule()
-                    .fill(Color.white.opacity(0.16))
-                    .frame(width: 170, height: 8)
-
-                Capsule()
-                    .fill(
-                        LinearGradient(
-                            colors: [Color.white.opacity(0.35), Color.white.opacity(0.95), Color.white.opacity(0.35)],
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
-                    )
-                    .frame(width: 90, height: 8)
-                    .offset(x: shimmerX)
-                    .mask(
-                        Capsule()
-                            .frame(width: 170, height: 8)
-                    )
-            }
-        }
-        .padding(.top, 4)
+        ProgressView()
+            .progressViewStyle(.circular)
+            .tint(.white.opacity(0.9))
+            .scaleEffect(1.1)
+            .padding(.top, 4)
     }
 }
 
+#Preview {
+    LaunchView {
+        print("Launch Finished")
+    }
+}

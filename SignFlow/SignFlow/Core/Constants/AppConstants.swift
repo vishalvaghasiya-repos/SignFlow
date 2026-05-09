@@ -6,7 +6,7 @@
 import Foundation
 
 enum AppConstants {
-    static let appDisplayName = "E-Sign PDF Documents"
+    static let appDisplayName = "E-Sign PDF"
     static let freeSignLimit = 5
 
     enum ProductID {
