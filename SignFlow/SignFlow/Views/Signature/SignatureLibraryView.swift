@@ -93,6 +93,14 @@ struct SignatureLibraryView: View {
             } message: {
                 Text("Give this signature a memorable name.")
             }
+            .alert("Error", isPresented: Binding(
+                get: { vm.errorMessage != nil },
+                set: { if !$0 { vm.errorMessage = nil } }
+            )) {
+                Button("OK", role: .cancel) { vm.errorMessage = nil }
+            } message: {
+                Text(vm.errorMessage ?? "")
+            }
         }
         .onAppear { vm.attach(context: modelContext) }
     }

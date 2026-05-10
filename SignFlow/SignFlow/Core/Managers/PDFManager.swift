@@ -22,11 +22,10 @@ enum PDFManager {
         document.pageCount
     }
 
-    /// Applies image stamps as PDF annotations to preserve original page orientation/indexing.
-    static func applySignature(
+    /// Applies each placement with its own signature image (multiple different signatures on one document).
+    static func applyStampedSignatures(
         document: PDFDocument,
-        image: UIImage,
-        placements: [PDFSignaturePlacement]
+        stampedPlacements: [(placement: PDFSignaturePlacement, image: UIImage)]
     ) throws -> PDFDocument {
         let output: PDFDocument
         if let copy = document.copy() as? PDFDocument {
@@ -37,7 +36,9 @@ enum PDFManager {
             throw PDFManagerError.invalidDocument
         }
 
-        for placement in placements {
+        for item in stampedPlacements {
+            let placement = item.placement
+            let image = item.image
             guard let page = output.page(at: placement.pageIndex) else { continue }
             let bounds = page.bounds(for: .mediaBox)
             let n = placement.normalizedRect
@@ -52,6 +53,18 @@ enum PDFManager {
         }
 
         return output
+    }
+
+    /// Applies one image at every placement (convenience for a single signature repeated).
+    static func applySignature(
+        document: PDFDocument,
+        image: UIImage,
+        placements: [PDFSignaturePlacement]
+    ) throws -> PDFDocument {
+        try applyStampedSignatures(
+            document: document,
+            stampedPlacements: placements.map { (placement: $0, image: image) }
+        )
     }
 
     static func write(document: PDFDocument, to url: URL) throws {

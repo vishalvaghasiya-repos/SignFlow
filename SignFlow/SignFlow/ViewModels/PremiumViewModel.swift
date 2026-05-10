@@ -5,33 +5,37 @@
 
 import Combine
 import Foundation
-import StoreKit
 
 @MainActor
 final class PremiumViewModel: ObservableObject {
-    @Published var selectedPeriod: SubscriptionPeriod = .yearly
+    @Published var selectedPackageId: String?
     @Published var isPurchasing = false
     @Published var statusMessage: String?
 
     private let subscription = SubscriptionManager.shared
 
     var productsLoaded: Bool {
-        !StoreKitManager.shared.products.isEmpty
+        !subscription.packageOptions.isEmpty
     }
 
     func load() async {
-        await subscription.load()
+        await subscription.loadOfferings()
+        if selectedPackageId == nil {
+            selectedPackageId =
+                subscription.packageOptions.first(where: { $0.title == "Yearly" })?.id
+                ?? subscription.packageOptions.first?.id
+        }
     }
 
     func purchase() async {
-        guard let product = subscription.product(for: selectedPeriod) else {
-            statusMessage = "Products unavailable. Configure StoreKit in Xcode."
+        guard let id = selectedPackageId ?? subscription.packageOptions.first?.id else {
+            statusMessage = "Plans unavailable. Check RevenueCat offerings or Info.plist API key."
             return
         }
         isPurchasing = true
         statusMessage = nil
         do {
-            try await subscription.purchase(product)
+            try await subscription.purchase(packageId: id)
             statusMessage = "Welcome to Premium!"
             HapticFeedback.success()
         } catch {
@@ -43,29 +47,17 @@ final class PremiumViewModel: ObservableObject {
     func restore() async {
         isPurchasing = true
         statusMessage = nil
-        do {
-            try await subscription.restore()
-            if subscription.isPremiumActive {
-                statusMessage = "Purchases restored."
-                HapticFeedback.success()
-            } else {
-                statusMessage = "No active subscription found."
-            }
-        } catch {
-            statusMessage = error.localizedDescription
+        await subscription.restore()
+        if subscription.isPremiumActive {
+            statusMessage = "Purchases restored."
+            HapticFeedback.success()
+        } else {
+            statusMessage = "No active subscription found."
         }
         isPurchasing = false
     }
 
-    func displayRows() -> [SubscriptionProductDisplay] {
-        SubscriptionPeriod.allCases.map { period in
-            let price = StoreKitManager.shared.displayPrice(for: period) ?? "—"
-            return SubscriptionProductDisplay(
-                id: period.productId,
-                period: period,
-                displayPrice: price,
-                subtitle: period == .yearly ? "Save more annually" : "Flexible billing"
-            )
-        }
+    func displayRows() -> [PremiumPackageOption] {
+        subscription.packageOptions
     }
 }

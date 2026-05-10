@@ -12,12 +12,16 @@ import SwiftUI
 struct SignFlowApp: App {
     @StateObject private var appState = AppState()
 
+    init() {
+        PurchasesBootstrap.configureIfPossible()
+    }
+
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             SignatureRecord.self,
             SignedDocumentRecord.self,
         ])
-        let configuration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
+        let configuration = ModelConfiguration(schema: schema, cloudKitDatabase: .automatic)
         do {
             return try ModelContainer(for: schema, configurations: [configuration])
         } catch {

@@ -1,14 +1,12 @@
 //
 //  PremiumView.swift
-//  SignFlow
 //
 
-import StoreKit
 import SwiftUI
 
 struct PremiumView: View {
     @Environment(\.dismiss) private var dismiss
-    @ObservedObject private var store = StoreKitManager.shared
+    @ObservedObject private var subscription = SubscriptionManager.shared
     @StateObject private var vm = PremiumViewModel()
 
     private let benefits = [
@@ -34,7 +32,7 @@ struct PremiumView: View {
                     ]
                     for (i, blob) in blobs.enumerated() {
                         let wobble = CGFloat(sin(t * 0.6 + Double(i)) * 18)
-                        var circle = Path(ellipseIn: CGRect(
+                        let circle = Path(ellipseIn: CGRect(
                             x: blob.0.x - blob.1 / 2 + wobble,
                             y: blob.0.y - blob.1 / 2,
                             width: blob.1,
@@ -85,7 +83,7 @@ struct PremiumView: View {
                     .padding(18)
                     .glassCard(cornerRadius: 22)
 
-                    Text("Free plan includes \(AppConstants.freeSignLimit) signed documents. Upgrade anytime.")
+                    Text("Free plan includes up to \(AppConstants.freeSignLimit) signed documents. Upgrade anytime.")
                         .font(.system(.caption, design: .rounded))
                         .foregroundStyle(.white.opacity(0.72))
 
@@ -98,7 +96,7 @@ struct PremiumView: View {
                     PrimaryButton(title: vm.isPurchasing ? "Processing…" : "Continue") {
                         Task { await vm.purchase() }
                     }
-                    .disabled(vm.isPurchasing)
+                    .disabled(vm.isPurchasing || vm.displayRows().isEmpty)
 
                     Button {
                         Task { await vm.restore() }
@@ -126,25 +124,25 @@ struct PremiumView: View {
         .task {
             await vm.load()
         }
-        .onChange(of: store.purchasedProductIDs) { _, ids in
-            if !ids.isEmpty {
+        .onChange(of: subscription.isPremiumActive) { _, active in
+            if active {
                 dismiss()
             }
         }
     }
 
-    private func subscriptionCard(_ row: SubscriptionProductDisplay) -> some View {
-        let selected = vm.selectedPeriod == row.period
+    private func subscriptionCard(_ row: PremiumPackageOption) -> some View {
+        let selected = vm.selectedPackageId == row.id
         return Button {
-            vm.selectedPeriod = row.period
+            vm.selectedPackageId = row.id
             HapticFeedback.light()
         } label: {
             HStack {
                 VStack(alignment: .leading, spacing: 6) {
                     HStack(spacing: 8) {
-                        Text(row.period.title)
+                        Text(row.title)
                             .font(.system(.headline, design: .rounded).weight(.semibold))
-                        if let badge = row.period.badge {
+                        if let badge = row.badge {
                             Text(badge.uppercased())
                                 .font(.system(.caption2, design: .rounded).weight(.bold))
                                 .padding(.horizontal, 8)

@@ -3,6 +3,7 @@
 //  SignFlow
 //
 //  SwiftData models (persistence layer).
+//  CloudKit requires: no `.unique` constraints, and every stored property must be optional or have a default.
 //
 
 import Foundation
@@ -10,10 +11,10 @@ import SwiftData
 
 @Model
 final class SignatureRecord {
-    @Attribute(.unique) var id: UUID
-    var name: String
-    var createdAt: Date
-    var imageFileName: String
+    var id: UUID = UUID()
+    var name: String = ""
+    var createdAt: Date = Date()
+    var imageFileName: String = ""
 
     init(id: UUID = UUID(), name: String, createdAt: Date = Date(), imageFileName: String) {
         self.id = id
@@ -25,11 +26,11 @@ final class SignatureRecord {
 
 @Model
 final class SignedDocumentRecord {
-    @Attribute(.unique) var id: UUID
-    var displayName: String
-    var relativeFilePath: String
-    var createdAt: Date
-    var pageCount: Int
+    var id: UUID = UUID()
+    var displayName: String = ""
+    var relativeFilePath: String = ""
+    var createdAt: Date = Date()
+    var pageCount: Int = 0
 
     init(
         id: UUID = UUID(),

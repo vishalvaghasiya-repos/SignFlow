@@ -26,6 +26,7 @@ enum StorageManager {
         )
         context.insert(record)
         try context.save()
+        CloudSyncStatus.shared.markLocalLibraryChange()
         return SignedDocumentModel(entity: record)
     }
 
@@ -37,6 +38,7 @@ enum StorageManager {
         DocumentPaths.deleteFile(at: record.fileURL)
         context.delete(record)
         try context.save()
+        CloudSyncStatus.shared.markLocalLibraryChange()
     }
 
     static func fetchSignedDocuments(context: ModelContext) throws -> [SignedDocumentModel] {

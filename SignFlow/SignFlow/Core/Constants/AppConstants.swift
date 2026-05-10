@@ -7,7 +7,21 @@ import Foundation
 
 enum AppConstants {
     static let appDisplayName = "E-Sign PDF"
-    static let freeSignLimit = 5
+
+    /// Free-tier cap before upgrade (debug builds use a higher limit for testing).
+    static var freeSignLimit: Int {
+        #if DEBUG
+        50
+        #else
+        5
+        #endif
+    }
+
+    /// Must match the entitlement identifier in your RevenueCat dashboard.
+    static let defaultRevenueCatEntitlementID = "premium"
+
+    /// Must match **iCloud** capability container in Xcode (and SignFlow.entitlements).
+    static let iCloudContainerIdentifier = "iCloud.com.jvapps.signflow"
 
     enum ProductID {
         static let weekly = "com.signflow.premium.weekly"

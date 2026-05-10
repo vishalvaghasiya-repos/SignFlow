@@ -5,13 +5,14 @@
 
 import Combine
 import Foundation
-import StoreKit
 import SwiftUI
 import UIKit
 
 @MainActor
 final class SettingsViewModel: ObservableObject {
     @Published var restoreMessage: String?
+    @Published var iCloudSyncBusy = false
+    @Published var iCloudSyncError: String?
 
     var appVersion: String {
         let v = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
@@ -42,16 +43,46 @@ final class SettingsViewModel: ObservableObject {
     }
 
     func restorePurchases() async {
+        await SubscriptionManager.shared.restore()
+        if SubscriptionManager.shared.isPremiumActive {
+            restoreMessage = "Purchases restored."
+            HapticFeedback.success()
+        } else {
+            restoreMessage = "No active subscription found."
+        }
+    }
+
+    /// `true` when the app can open an iCloud Drive file container (not the same as “signed into iCloud”).
+    var iCloudContainerReachable: Bool {
+        DocumentPaths.ubiquitousContainerBaseURL() != nil
+    }
+
+    /// User is signed into iCloud; file container can still be nil if iCloud Drive is off or capabilities are wrong.
+    var iCloudUserSignedIn: Bool {
+        FileManager.default.ubiquityIdentityToken != nil
+    }
+
+    func applyICloudLibrarySync(_ enabled: Bool) async {
+        guard enabled != DocumentPaths.isICloudLibrarySyncEnabled else { return }
+        guard iCloudContainerReachable else {
+            iCloudSyncError = CloudLibraryMigratorError.iCloudUnavailable.localizedDescription
+            return
+        }
+        iCloudSyncBusy = true
+        iCloudSyncError = nil
+        defer { iCloudSyncBusy = false }
         do {
-            try await SubscriptionManager.shared.restore()
-            if SubscriptionManager.shared.isPremiumActive {
-                restoreMessage = "Purchases restored."
-                HapticFeedback.success()
+            if enabled {
+                try CloudLibraryMigrator.migrateToICloudIfNeeded()
+                DocumentPaths.setICloudLibrarySyncEnabled(true)
             } else {
-                restoreMessage = "No active purchases found."
+                try CloudLibraryMigrator.migrateToLocalIfNeeded()
+                DocumentPaths.setICloudLibrarySyncEnabled(false)
             }
+            CloudSyncStatus.shared.recordRemoteChange()
+            HapticFeedback.light()
         } catch {
-            restoreMessage = error.localizedDescription
+            iCloudSyncError = error.localizedDescription
         }
     }
 

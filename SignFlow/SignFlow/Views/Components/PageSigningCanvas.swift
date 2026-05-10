@@ -6,17 +6,29 @@
 import SwiftUI
 import UIKit
 
+/// Locked stamps already placed on this page (shown under the live sticker).
+struct CommittedStampPreview: Identifiable {
+    let id: UUID
+    let normalizedRect: CGRect
+    let rotationDegrees: Double
+    let image: UIImage
+}
+
 /// PDF page thumbnail with a draggable signature overlay. `normalizedRect` uses top-left origin, 0...1.
 struct PageSigningCanvas: View {
     let thumbnail: UIImage
     @Binding var normalizedRect: CGRect
     let signature: UIImage?
     @Binding var rotationDegrees: Double
+    /// Placements already confirmed via "Apply to page" for this page (drawn behind the live sticker).
+    var committedStamps: [CommittedStampPreview] = []
     var onCancel: (() -> Void)?
 
-    @State private var dragOffset: CGSize = .zero
+    @GestureState private var dragTranslation: CGSize = .zero
     @State private var liveScale: CGFloat = 1
     @State private var liveRotation: Angle = .zero
+
+    private let stickerBorder = RoundedRectangle(cornerRadius: 6, style: .continuous)
 
     var body: some View {
         GeometryReader { geo in
@@ -28,53 +40,95 @@ struct PageSigningCanvas: View {
                     .frame(width: size.width, height: size.height)
                     .clipped()
 
+                ForEach(committedStamps) { stamp in
+                    committedStampView(stamp: stamp, canvasSize: size)
+                }
+
                 if let signature {
-                    let w = max(36, normalizedRect.width * size.width)
-                    let h = max(24, normalizedRect.height * size.height)
-                    let x = normalizedRect.minX * size.width + dragOffset.width
-                    let y = normalizedRect.minY * size.height + dragOffset.height
-
-                    ZStack(alignment: .topTrailing) {
-                        Image(uiImage: signature)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: w, height: h)
-                            .shadow(color: .black.opacity(0.2), radius: 6, x: 0, y: 3)
-                            .rotationEffect(.degrees(rotationDegrees) + liveRotation)
-                            .scaleEffect(liveScale)
-                            .gesture(dragGesture(size: size))
-                            .simultaneousGesture(magnificationGesture())
-                            .simultaneousGesture(rotationGesture())
-
-                        Button {
-                            onCancel?()
-                        } label: {
-                            Image(systemName: "xmark.circle.fill")
-                                .foregroundStyle(.white, .red)
-                                .font(.system(size: 22))
-                                .background(Circle().fill(.ultraThinMaterial))
-                        }
-                        .offset(x: 10, y: -10)
-                    }
-                    .position(x: x + w / 2, y: y + h / 2)
+                    liveSignatureOverlay(signature: signature, canvasSize: size)
                 }
             }
         }
     }
 
-    private func dragGesture(size: CGSize) -> some Gesture {
-        DragGesture()
-            .onChanged { value in
-                dragOffset = value.translation
+    private func committedStampView(stamp: CommittedStampPreview, canvasSize: CGSize) -> some View {
+        let w = max(36, stamp.normalizedRect.width * canvasSize.width)
+        let h = max(24, stamp.normalizedRect.height * canvasSize.height)
+        let x = stamp.normalizedRect.minX * canvasSize.width
+        let y = stamp.normalizedRect.minY * canvasSize.height
+        return Image(uiImage: stamp.image)
+            .resizable()
+            .scaledToFit()
+            .frame(width: w, height: h)
+            .opacity(0.92)
+            .shadow(color: .black.opacity(0.15), radius: 4, x: 0, y: 2)
+            .rotationEffect(.degrees(stamp.rotationDegrees))
+            .overlay {
+                stickerBorder
+                    .stroke(Color.cyan.opacity(0.85), lineWidth: 2)
+            }
+            .position(x: x + w / 2, y: y + h / 2)
+            .allowsHitTesting(false)
+    }
+
+    private func liveSignatureOverlay(signature: UIImage, canvasSize: CGSize) -> some View {
+        let w = max(36, normalizedRect.width * canvasSize.width)
+        let h = max(24, normalizedRect.height * canvasSize.height)
+        let cx = normalizedRect.midX * canvasSize.width
+        let cy = normalizedRect.midY * canvasSize.height
+
+        return ZStack(alignment: .center) {
+            Image(uiImage: signature)
+                .resizable()
+                .scaledToFit()
+                .frame(width: w, height: h)
+                .contentShape(Rectangle())
+                .shadow(color: .black.opacity(0.2), radius: 6, x: 0, y: 3)
+                .rotationEffect(.degrees(rotationDegrees) + liveRotation)
+                .scaleEffect(liveScale)
+                .overlay {
+                    stickerBorder
+                        .stroke(Color.white.opacity(0.95), lineWidth: 2.5)
+                        .shadow(color: .black.opacity(0.4), radius: 2, x: 0, y: 1)
+                }
+                .simultaneousGesture(dragGesture(canvasSize: canvasSize))
+                .simultaneousGesture(magnificationGesture())
+                .simultaneousGesture(rotationGesture())
+        }
+        .frame(width: w, height: h)
+        .overlay(alignment: .topTrailing) {
+            Button {
+                onCancel?()
+            } label: {
+                Image(systemName: "xmark.circle.fill")
+                    .symbolRenderingMode(.palette)
+                    .foregroundStyle(.white, .red)
+                    .font(.system(size: 22))
+                    .background(Circle().fill(.ultraThinMaterial))
+            }
+            .buttonStyle(.plain)
+            .offset(x: 10, y: -10)
+        }
+        .position(x: cx, y: cy)
+        .offset(dragTranslation)
+        .transaction { txn in
+            txn.animation = nil
+            txn.disablesAnimations = true
+        }
+    }
+
+    private func dragGesture(canvasSize: CGSize) -> some Gesture {
+        DragGesture(minimumDistance: 0)
+            .updating($dragTranslation) { value, state, _ in
+                state = value.translation
             }
             .onEnded { value in
-                let dx = value.translation.width / max(size.width, 1)
-                let dy = value.translation.height / max(size.height, 1)
+                let dx = value.translation.width / max(canvasSize.width, 1)
+                let dy = value.translation.height / max(canvasSize.height, 1)
                 var next = normalizedRect
                 next.origin.x = clamp(next.origin.x + dx, min: 0, max: 1 - next.width)
                 next.origin.y = clamp(next.origin.y + dy, min: 0, max: 1 - next.height)
                 normalizedRect = next
-                dragOffset = .zero
             }
     }
 

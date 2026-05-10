@@ -5,41 +5,12 @@
 
 import Foundation
 
-enum SubscriptionPeriod: String, CaseIterable, Identifiable {
-    case weekly
-    case monthly
-    case yearly
-
-    var id: String { rawValue }
-
-    var title: String {
-        switch self {
-        case .weekly: "Weekly"
-        case .monthly: "Monthly"
-        case .yearly: "Yearly"
-        }
-    }
-
-    var productId: String {
-        switch self {
-        case .weekly: AppConstants.ProductID.weekly
-        case .monthly: AppConstants.ProductID.monthly
-        case .yearly: AppConstants.ProductID.yearly
-        }
-    }
-
-    var badge: String? {
-        switch self {
-        case .yearly: "Best value"
-        case .monthly: "Popular"
-        default: nil
-        }
-    }
-}
-
-struct SubscriptionProductDisplay: Identifiable {
+/// Row shown on the Premium paywall (backed by RevenueCat offerings).
+struct PremiumPackageOption: Identifiable, Equatable {
     let id: String
-    let period: SubscriptionPeriod
+    let title: String
     let displayPrice: String
     let subtitle: String
+    let badge: String?
+    let sortIndex: Int
 }

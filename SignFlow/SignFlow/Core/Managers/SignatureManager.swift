@@ -23,6 +23,7 @@ enum SignatureManager {
         let record = SignatureRecord(name: name, imageFileName: fileName)
         context.insert(record)
         try context.save()
+        CloudSyncStatus.shared.markLocalLibraryChange()
         return SignatureModel(entity: record)
     }
 
@@ -33,6 +34,7 @@ enum SignatureManager {
         guard let record = try context.fetch(descriptor).first else { return }
         record.name = newName
         try context.save()
+        CloudSyncStatus.shared.markLocalLibraryChange()
     }
 
     static func deleteSignature(context: ModelContext, id: UUID) throws {
@@ -44,6 +46,7 @@ enum SignatureManager {
         DocumentPaths.deleteFile(at: url)
         context.delete(record)
         try context.save()
+        CloudSyncStatus.shared.markLocalLibraryChange()
     }
 
     static func fetchAll(context: ModelContext) throws -> [SignatureModel] {
@@ -51,5 +54,13 @@ enum SignatureManager {
             sortBy: [SortDescriptor(\.createdAt, order: .reverse)]
         )
         return try context.fetch(descriptor).map(SignatureModel.init(entity:))
+    }
+
+    static func signature(context: ModelContext, id: UUID) throws -> SignatureModel? {
+        let predicate = #Predicate<SignatureRecord> { $0.id == id }
+        var descriptor = FetchDescriptor<SignatureRecord>(predicate: predicate)
+        descriptor.fetchLimit = 1
+        guard let record = try context.fetch(descriptor).first else { return nil }
+        return SignatureModel(entity: record)
     }
 }

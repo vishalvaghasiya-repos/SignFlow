@@ -38,5 +38,8 @@ struct MainShellView: View {
         .sheet(isPresented: $appState.showPremiumPaywall) {
             PremiumView()
         }
+        .onAppear {
+            SubscriptionManager.shared.refreshPremiumState()
+        }
     }
 }

@@ -50,10 +50,12 @@ struct PDFSigningView: View {
                                 get: { vm.currentRotation },
                                 set: { vm.currentRotation = $0 }
                             ),
+                            committedStamps: vm.committedStampPreviews(forPage: vm.currentPageIndex),
                             onCancel: {
                                 vm.clearWorkingSignatureOnCurrentPage()
                             }
                         )
+                        .id(vm.currentPageIndex)
                         .frame(height: min(420, UIScreen.main.bounds.height * 0.48))
                         .glassCard(cornerRadius: 22)
                     } else {
@@ -160,11 +162,19 @@ struct PDFSigningView: View {
                         .font(.system(.subheadline, design: .rounded).weight(.semibold))
                 }
                 .buttonStyle(.borderedProminent)
-                .tint(.white.opacity(0.22))
+                .tint(colorScheme == .light ? Theme.premiumPurple : Color.white.opacity(0.28))
 
                 Spacer()
 
-                Button("Add placement") {
+                Button("Undo last") {
+                    vm.removeLastPlacement()
+                }
+                .font(.system(.caption, design: .rounded).weight(.semibold))
+                .foregroundStyle(Theme.primaryText)
+                .disabled(vm.placements.isEmpty)
+                .opacity(vm.placements.isEmpty ? 0.45 : 1)
+
+                Button("Apply to page") {
                     if vm.signatureImage == nil {
                         showSignaturePicker = true
                     } else {
@@ -186,7 +196,7 @@ struct PDFSigningView: View {
             TextField("Signed Document Title", text: $displayName)
                 .textFieldStyle(.roundedBorder)
 
-            Text("Use drag, pinch to zoom, rotate gesture, and X to cancel sticker.")
+            Text("Position the sticker, then tap Apply to page to lock it on this page preview. Repeat for multiple stamps or pages. Undo last removes the last applied stamp. X clears the live sticker without applying.")
                 .font(.system(.caption, design: .rounded))
                 .foregroundStyle(Theme.secondaryText)
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -203,8 +213,8 @@ struct PDFSigningView: View {
                     }
                 }
             }
-            .disabled(vm.isSaving || vm.signatureImage == nil || vm.document == nil)
-            .opacity(vm.signatureImage == nil ? 0.55 : 1)
+            .disabled(vm.isSaving || vm.document == nil || (vm.placements.isEmpty && vm.signatureImage == nil))
+            .opacity((vm.placements.isEmpty && vm.signatureImage == nil) ? 0.55 : 1)
         }
         .padding(.bottom, 18)
     }
