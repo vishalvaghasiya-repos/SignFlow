@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		62A2E4AB5A1C4B57BF42DAD8 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = EFE085A354BC4C769D42DAD8 /* README.md */; };
+		D3A7FC312FB338D5005A0D49 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D3A7FC302FB338D4005A0D49 /* StoreKit.framework */; };
 		D3C95E332FB0454A009DE1E1 /* RevenueCatKit in Frameworks */ = {isa = PBXBuildFile; productRef = D3C95E322FB0454A009DE1E1 /* RevenueCatKit */; };
 /* End PBXBuildFile section */
 
@@ -28,6 +29,7 @@
 /* End PBXBuildRule section */
 
 /* Begin PBXFileReference section */
+		D3A7FC302FB338D4005A0D49 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		D3D4FBB22FAEFB72001F24F9 /* SignFlow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SignFlow.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EFE085A354BC4C769D42DAD8 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -59,16 +61,26 @@
 			buildActionMask = 2147483647;
 			files = (
 				D3C95E332FB0454A009DE1E1 /* RevenueCatKit in Frameworks */,
+				D3A7FC312FB338D5005A0D49 /* StoreKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		D3A7FC2F2FB338D4005A0D49 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				D3A7FC302FB338D4005A0D49 /* StoreKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		D3D4FBA92FAEFB72001F24F9 = {
 			isa = PBXGroup;
 			children = (
 				D3D4FBB42FAEFB72001F24F9 /* SignFlow */,
+				D3A7FC2F2FB338D4005A0D49 /* Frameworks */,
 				D3D4FBB32FAEFB72001F24F9 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -186,6 +198,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -226,6 +239,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;

@@ -24,16 +24,16 @@ enum AppConstants {
     static let iCloudContainerIdentifier = "iCloud.com.jvapps.signflow"
 
     enum ProductID {
-        static let weekly = "com.signflow.premium.weekly"
-        static let monthly = "com.signflow.premium.monthly"
-        static let yearly = "com.signflow.premium.yearly"
+        static let weekly = "com.jvapps.signflow.weekly"
+        static let monthly = "com.jvapps.signflow.monthly"
+        static let yearly = "com.jvapps.signflow.yearly"
         static let all: [String] = [weekly, monthly, yearly]
     }
 
     enum URLs {
-        static let privacy = URL(string: "https://example.com/privacy")!
-        static let terms = URL(string: "https://example.com/terms")!
-        static let support = URL(string: "mailto:support@example.com")!
-        static let appStoreReview = URL(string: "https://apps.apple.com/app/id000000000?action=write-review")!
+        static let privacy = URL(string: "https://sites.google.com/view/privacypolicycenter/privacy-policy")!
+        static let terms = URL(string: "https://sites.google.com/view/privacypolicycenter/terms-conditions?authuser=0")!
+        static let support = URL(string: "mailto:vaghasiya907@gmail.com")!
+        static let appStoreReview = URL(string: "https://apps.apple.com/app/id6768590632?action=write-review")!
     }
 }
