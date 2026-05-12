@@ -61,6 +61,7 @@ struct SettingsView: View {
                                 Toggle("Sync library with iCloud", isOn: $iCloudSyncToggle)
                                     .font(.system(.body, design: .rounded).weight(.medium))
                                     .foregroundStyle(Theme.primaryText)
+                                    .tint(Theme.accent)
                                     .disabled(vm.iCloudSyncBusy || !vm.iCloudContainerReachable)
                                     .onChange(of: iCloudSyncToggle) { _, newValue in
                                         Task {

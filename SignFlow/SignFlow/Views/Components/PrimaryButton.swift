@@ -45,6 +45,10 @@ struct PrimaryButton: View {
                                 RoundedRectangle(cornerRadius: 16, style: .continuous)
                                     .fill(filledFill)
                                     .shadow(color: filledShadowColor, radius: 4, x: 0, y: 2)
+                                    .overlay {
+                                        RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                            .stroke(filledStroke, lineWidth: 1)
+                                    }
                             }
                         }
                     } else {
@@ -60,13 +64,13 @@ struct PrimaryButton: View {
     private var filledFill: Color {
         colorScheme == .light
             ? Color(uiColor: .systemGray6)
-            : Color.white.opacity(0.95)
+            : Color(uiColor: .tertiarySystemFill)
     }
 
     private var filledStroke: Color {
         colorScheme == .light
             ? Color.black.opacity(0.12)
-            : Color.clear
+            : Color.white.opacity(0.14)
     }
 
     private var filledShadowColor: Color {
