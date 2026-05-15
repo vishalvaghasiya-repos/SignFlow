@@ -116,6 +116,8 @@ struct PremiumView: View {
                             .foregroundStyle(.white.opacity(0.85))
                             .frame(maxWidth: .infinity)
                     }
+
+                    legalFooter
                 }
                 .padding(.horizontal, 20)
                 .padding(.bottom, 28)
@@ -179,5 +181,25 @@ struct PremiumView: View {
             }
         }
         .buttonStyle(.plain)
+    }
+
+    private var legalFooter: some View {
+        VStack(spacing: 10) {
+            Text("Subscriptions renew automatically unless canceled at least 24 hours before the end of the current period. Manage or cancel anytime in your App Store account settings.")
+                .font(.system(.caption2, design: .rounded))
+                .multilineTextAlignment(.center)
+                .foregroundStyle(.white.opacity(0.68))
+                .frame(maxWidth: .infinity)
+
+            HStack(spacing: 10) {
+                Link("Privacy Policy", destination: AppConstants.URLs.privacy)
+                Text("|")
+                    .foregroundStyle(.white.opacity(0.45))
+                Link("Terms of Use", destination: AppConstants.URLs.terms)
+            }
+            .font(.system(.caption, design: .rounded).weight(.semibold))
+            .foregroundStyle(.white.opacity(0.9))
+        }
+        .padding(.top, 4)
     }
 }
