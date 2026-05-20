@@ -6,6 +6,8 @@
 import PDFKit
 import SwiftUI
 import UIKit
+import AdsManagerKit
+
 
 struct SignedPDFPreviewView: View {
     @Environment(\.colorScheme) private var colorScheme

@@ -6,6 +6,8 @@
 import PDFKit
 import SwiftData
 import SwiftUI
+import AdsManagerKit
+
 
 struct PDFSigningView: View {
     @Environment(\.colorScheme) private var colorScheme
@@ -208,6 +210,7 @@ struct PDFSigningView: View {
                             appState.recordFreeSignIfNeeded()
                         }
                         if let saved = vm.lastSavedDocument {
+                            AdsManager.shared.showInterstitialIfAvailable()
                             documentToPreview = saved
                         }
                     }

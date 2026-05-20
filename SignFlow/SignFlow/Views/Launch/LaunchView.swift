@@ -4,6 +4,9 @@
 //
 
 import SwiftUI
+import AdsManagerKit
+import FirebaseRemoteConfigInternal
+import Network
 
 struct LaunchView: View {
     let onFinished: () -> Void
@@ -71,8 +74,14 @@ struct LaunchView: View {
             withAnimation(.easeInOut(duration: 0.9).repeatForever(autoreverses: true)) {
                 loadingPhase = 1
             }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.95) {
-                onFinished()
+            fetchFromRemoteConfig {
+                DispatchQueue.main.async {
+                    AdsManager.configure {
+                        DispatchQueue.main.async {
+                            onFinished()
+                        }
+                    }
+                }
             }
         }
     }
@@ -90,4 +99,92 @@ struct LaunchView: View {
     LaunchView {
         print("Launch Finished")
     }
+}
+
+private func fetchFromRemoteConfig(_ completion: @Sendable @escaping () -> Void) {
+    if !checkInternet() {
+        completion()
+        return
+    }
+    
+    let remoteConfig = RemoteConfig.remoteConfig()
+    let settings = RemoteConfigSettings()
+    #if DEBUG
+    settings.minimumFetchInterval = 0
+    #else
+    settings.minimumFetchInterval = 3600
+    #endif
+    remoteConfig.configSettings = settings
+    
+    let expirationDuration = 0
+    remoteConfig.fetch(withExpirationDuration: TimeInterval(expirationDuration)) { (status, error) -> Void in
+        guard status == .success else {
+            completion()
+            return
+        }
+        remoteConfig.activate { (success, error) in
+            let config = RemoteConfig.remoteConfig()
+            
+            var isProduction = true
+            #if DEBUG
+            isProduction = false
+            #endif
+            
+            let openAdEnabled = config.configValue(forKey: "openAdEnabled").boolValue
+            let openAdOnLaunchEnabled = config.configValue(forKey: "openAdOnLaunchEnabled").boolValue
+            let bannerAdEnabled = config.configValue(forKey: "bannerAdEnabled").boolValue
+            let interstitialAdEnabled = config.configValue(forKey: "interstitialAdEnabled").boolValue
+            let nativeAdEnabled = config.configValue(forKey: "nativeAdEnabled").boolValue
+            let nativeAdPreloadEnabled = config.configValue(forKey: "nativeAdPreloadEnabled").boolValue
+            let openAdUnitId = config.configValue(forKey: "openAdUnitId").stringValue
+            let bannerAdUnitId = config.configValue(forKey: "bannerAdUnitId").stringValue
+            let interstitialAdUnitId = config.configValue(forKey: "interstitialAdUnitId").stringValue
+            let nativeAdUnitId = config.configValue(forKey: "nativeAdUnitId").stringValue
+            let interstitialAdShowCount = Int(truncating: config.configValue(forKey: "interstitialAdShowCount").numberValue)
+            let maxInterstitialAdsPerSession = Int(truncating: config.configValue(forKey: "maxInterstitialAdsPerSession").numberValue)
+            let bannerAdErrorCount = Int(truncating: config.configValue(forKey: "bannerAdErrorCount").numberValue)
+            let interstitialAdErrorCount = Int(truncating: config.configValue(forKey: "interstitialAdErrorCount").numberValue)
+            let nativeAdErrorCount = Int(truncating: config.configValue(forKey: "nativeAdErrorCount").numberValue)
+            
+            DispatchQueue.main.async {
+                AdsManager.configureAds(
+                    isProduction: isProduction,
+                    openAdEnabled: openAdEnabled,
+                    bannerAdEnabled: bannerAdEnabled,
+                    interstitialAdEnabled: interstitialAdEnabled,
+                    nativeAdEnabled: nativeAdEnabled,
+                    openAdUnitId: openAdUnitId,
+                    bannerAdUnitId: bannerAdUnitId,
+                    interstitialAdUnitId: interstitialAdUnitId,
+                    nativeAdUnitId: nativeAdUnitId,
+                    interstitialAdShowCount: interstitialAdShowCount,
+                    maxInterstitialAdsPerSession: maxInterstitialAdsPerSession,
+                    bannerAdErrorCount: bannerAdErrorCount,
+                    interstitialAdErrorCount: interstitialAdErrorCount,
+                    nativeAdErrorCount: nativeAdErrorCount
+                )
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3, execute: {
+                    completion()
+                })
+            }
+        }
+    }
+}
+
+private func checkInternet() -> Bool {
+    let monitor = NWPathMonitor()
+    let queue = DispatchQueue(label: "InternetConnectionMonitor")
+    var isConnected = false
+    let semaphore = DispatchSemaphore(value: 0)
+    
+    monitor.pathUpdateHandler = { path in
+        isConnected = (path.status == .satisfied)
+        semaphore.signal()
+    }
+    
+    monitor.start(queue: queue)
+    _ = semaphore.wait(timeout: .now() + 1)
+    monitor.cancel()
+    return isConnected
 }

@@ -1,5 +1,5 @@
 {
-  "originHash" : "2ee64d34a6ce38c7280bd5d06919d2a659d06933e8e1e4528443d104d88fa60c",
+  "originHash" : "235b11fb5040e928f2cba33cc2242a5bc2fed9becb543e21860f97d637f3e0ad",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -11,12 +11,30 @@
       }
     },
     {
+      "identity" : "adsmanagerkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/vishalvaghasiya-ios/AdsManagerKit.git",
+      "state" : {
+        "revision" : "29c8446f8ea2a7f972f7bd4719ced45f3eb5483c",
+        "version" : "1.3.4"
+      }
+    },
+    {
       "identity" : "app-check",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/google/app-check.git",
       "state" : {
         "revision" : "61b85103a1aeed8218f17c794687781505fbbef5",
         "version" : "11.2.0"
+      }
+    },
+    {
+      "identity" : "askratingkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/vishal-vaghasiya/ASKRatingKit.git",
+      "state" : {
+        "revision" : "e49508e6ad01855e35dfd9e4364f22038386e982",
+        "version" : "1.0.1"
       }
     },
     {
@@ -92,6 +110,15 @@
       }
     },
     {
+      "identity" : "jgprogresshud",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/JonasGessner/JGProgressHUD.git",
+      "state" : {
+        "revision" : "78d7cd35f1d90ff74fd82e486f2cbe4b24be8cf9",
+        "version" : "2.2.0"
+      }
+    },
+    {
       "identity" : "leveldb",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/firebase/leveldb.git",
@@ -134,6 +161,24 @@
       "state" : {
         "revision" : "9ba8c365398319f83874d477a6e42cc7971403c5",
         "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "swift-package-manager-google-mobile-ads",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/googleads/swift-package-manager-google-mobile-ads",
+      "state" : {
+        "revision" : "a81f522aa4f59c0d90ee523d703bd426d5b27a03",
+        "version" : "13.4.0"
+      }
+    },
+    {
+      "identity" : "swift-package-manager-google-user-messaging-platform",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/googleads/swift-package-manager-google-user-messaging-platform.git",
+      "state" : {
+        "revision" : "13b248eaa73b7826f0efb1bcf455e251d65ecb1b",
+        "version" : "3.1.0"
       }
     }
   ],

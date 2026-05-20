@@ -5,6 +5,9 @@
 
 import SwiftData
 import SwiftUI
+import ASKRatingKit
+import AdsManagerKit
+
 
 private struct PDFSignSession: Identifiable {
     let id = UUID()
@@ -22,6 +25,8 @@ struct HomeView: View {
     @State private var previewDoc: SignedDocumentModel?
     @State private var showSignatures = false
     @State private var showNewSignature = false
+    @State private var nativeIsLoaded = false
+    @State private var nativeHeight: CGFloat = AdType.MEDIUM.height
 
     var body: some View {
         NavigationStack {
@@ -33,6 +38,15 @@ struct HomeView: View {
                         searchField
 
                         signaturesSection
+
+                        NativeAdContainerView(
+                            adType: .MEDIUM,
+                            isLoaded: $nativeIsLoaded,
+                            height: $nativeHeight
+                        )
+                        .frame(height: nativeHeight)
+                        .opacity(nativeIsLoaded ? 1 : 0)
+                        .cornerRadius(8)
 
                         recentSection
                     }
@@ -61,6 +75,9 @@ struct HomeView: View {
         }
         .onAppear {
             vm.attach(context: modelContext)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                ASKRatingKit.shared.requestRatingIfNeeded()
+            }
         }
         .onChange(of: appState.selectedTab) { _, tab in
             if tab == .home {

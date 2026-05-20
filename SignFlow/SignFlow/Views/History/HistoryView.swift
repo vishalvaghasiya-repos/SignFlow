@@ -5,6 +5,8 @@
 
 import SwiftData
 import SwiftUI
+import AdsManagerKit
+
 
 struct HistoryView: View {
     @Environment(\.modelContext) private var modelContext
@@ -13,6 +15,8 @@ struct HistoryView: View {
 
     @State private var previewDoc: SignedDocumentModel?
     @State private var pendingDeleteDoc: SignedDocumentModel?
+    @State private var bannerIsLoaded = false
+    @State private var bannerHeight: CGFloat = 0
 
     var body: some View {
         NavigationStack {
@@ -40,6 +44,14 @@ struct HistoryView: View {
                         .padding(.vertical, 16)
                     }
                 }
+            }
+            .safeAreaInset(edge: .bottom) {
+                BannerAdView(
+                    adType: .ADAPTIVE,
+                    isLoaded: $bannerIsLoaded,
+                    height: $bannerHeight
+                )
+                .frame(height: bannerHeight)
             }
             .navigationTitle("History")
             .navigationBarTitleDisplayMode(.large)

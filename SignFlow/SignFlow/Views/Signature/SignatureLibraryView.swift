@@ -5,6 +5,7 @@
 
 import SwiftData
 import SwiftUI
+import AdsManagerKit
 
 struct SignatureLibraryView: View {
     @Environment(\.colorScheme) private var colorScheme
@@ -76,7 +77,12 @@ struct SignatureLibraryView: View {
             .tint(.primary)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Done") { dismiss() }
+                    Button("Done") {
+                        AdsManager.shared.showInterstitialIfAvailable()
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
+                            dismiss()
+                        }
+                    }
                         .foregroundStyle(.primary)
                 }
             }

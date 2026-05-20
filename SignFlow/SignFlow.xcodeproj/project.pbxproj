@@ -13,6 +13,10 @@
 		D351DEF12FB47BF30089368F /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = D351DEF02FB47BF30089368F /* FirebaseCore */; };
 		D351DEF32FB47BF30089368F /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = D351DEF22FB47BF30089368F /* FirebaseCrashlytics */; };
 		D3A7FC312FB338D5005A0D49 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D3A7FC302FB338D4005A0D49 /* StoreKit.framework */; };
+		D3AFE66D2FBDDF6100249BB3 /* AdsManager in Frameworks */ = {isa = PBXBuildFile; productRef = D3AFE66C2FBDDF6100249BB3 /* AdsManager */; };
+		D3AFE66F2FBDDF6100249BB3 /* AdsManagerKit in Frameworks */ = {isa = PBXBuildFile; productRef = D3AFE66E2FBDDF6100249BB3 /* AdsManagerKit */; };
+		D3AFE6722FBDDF7D00249BB3 /* ASKRatingKit in Frameworks */ = {isa = PBXBuildFile; productRef = D3AFE6712FBDDF7D00249BB3 /* ASKRatingKit */; };
+		D3AFE6742FBDE0B500249BB3 /* FirebaseRemoteConfig in Frameworks */ = {isa = PBXBuildFile; productRef = D3AFE6732FBDE0B500249BB3 /* FirebaseRemoteConfig */; };
 		D3C95E332FB0454A009DE1E1 /* RevenueCatKit in Frameworks */ = {isa = PBXBuildFile; productRef = D3C95E322FB0454A009DE1E1 /* RevenueCatKit */; };
 /* End PBXBuildFile section */
 
@@ -64,12 +68,16 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D3AFE66F2FBDDF6100249BB3 /* AdsManagerKit in Frameworks */,
 				D3C95E332FB0454A009DE1E1 /* RevenueCatKit in Frameworks */,
+				D3AFE66D2FBDDF6100249BB3 /* AdsManager in Frameworks */,
+				D3AFE6722FBDDF7D00249BB3 /* ASKRatingKit in Frameworks */,
 				D351DEF12FB47BF30089368F /* FirebaseCore in Frameworks */,
 				D3A7FC312FB338D5005A0D49 /* StoreKit.framework in Frameworks */,
 				D351DEF32FB47BF30089368F /* FirebaseCrashlytics in Frameworks */,
 				D351DEED2FB47BF30089368F /* FirebaseAnalytics in Frameworks */,
 				D351DEEF2FB47BF30089368F /* FirebaseAnalyticsCore in Frameworks */,
+				D3AFE6742FBDE0B500249BB3 /* FirebaseRemoteConfig in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -128,6 +136,10 @@
 				D351DEEE2FB47BF30089368F /* FirebaseAnalyticsCore */,
 				D351DEF02FB47BF30089368F /* FirebaseCore */,
 				D351DEF22FB47BF30089368F /* FirebaseCrashlytics */,
+				D3AFE66C2FBDDF6100249BB3 /* AdsManager */,
+				D3AFE66E2FBDDF6100249BB3 /* AdsManagerKit */,
+				D3AFE6712FBDDF7D00249BB3 /* ASKRatingKit */,
+				D3AFE6732FBDE0B500249BB3 /* FirebaseRemoteConfig */,
 			);
 			productName = SignFlow;
 			productReference = D3D4FBB22FAEFB72001F24F9 /* SignFlow.app */;
@@ -160,6 +172,8 @@
 			packageReferences = (
 				D3C95E312FB0454A009DE1E1 /* XCRemoteSwiftPackageReference "RevenueCatKit" */,
 				D351DEEB2FB47BF30089368F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				D3AFE66B2FBDDF6100249BB3 /* XCRemoteSwiftPackageReference "AdsManagerKit" */,
+				D3AFE6702FBDDF7D00249BB3 /* XCRemoteSwiftPackageReference "ASKRatingKit" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = D3D4FBB32FAEFB72001F24F9 /* Products */;
@@ -208,6 +222,7 @@
 				INFOPLIST_FILE = SignFlow/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "eSign PDF";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_NSUserTrackingUsageDescription = "This identifier will be used to deliver personalized ads to you.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -249,6 +264,7 @@
 				INFOPLIST_FILE = SignFlow/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "eSign PDF";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_NSUserTrackingUsageDescription = "This identifier will be used to deliver personalized ads to you.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -428,6 +444,22 @@
 				minimumVersion = 12.13.0;
 			};
 		};
+		D3AFE66B2FBDDF6100249BB3 /* XCRemoteSwiftPackageReference "AdsManagerKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/vishalvaghasiya-ios/AdsManagerKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.3.4;
+			};
+		};
+		D3AFE6702FBDDF7D00249BB3 /* XCRemoteSwiftPackageReference "ASKRatingKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/vishal-vaghasiya/ASKRatingKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.1;
+			};
+		};
 		D3C95E312FB0454A009DE1E1 /* XCRemoteSwiftPackageReference "RevenueCatKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/vishal-vaghasiya/RevenueCatKit";
@@ -458,6 +490,26 @@
 			isa = XCSwiftPackageProductDependency;
 			package = D351DEEB2FB47BF30089368F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseCrashlytics;
+		};
+		D3AFE66C2FBDDF6100249BB3 /* AdsManager */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D3AFE66B2FBDDF6100249BB3 /* XCRemoteSwiftPackageReference "AdsManagerKit" */;
+			productName = AdsManager;
+		};
+		D3AFE66E2FBDDF6100249BB3 /* AdsManagerKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D3AFE66B2FBDDF6100249BB3 /* XCRemoteSwiftPackageReference "AdsManagerKit" */;
+			productName = AdsManagerKit;
+		};
+		D3AFE6712FBDDF7D00249BB3 /* ASKRatingKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D3AFE6702FBDDF7D00249BB3 /* XCRemoteSwiftPackageReference "ASKRatingKit" */;
+			productName = ASKRatingKit;
+		};
+		D3AFE6732FBDE0B500249BB3 /* FirebaseRemoteConfig */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D351DEEB2FB47BF30089368F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseRemoteConfig;
 		};
 		D3C95E322FB0454A009DE1E1 /* RevenueCatKit */ = {
 			isa = XCSwiftPackageProductDependency;

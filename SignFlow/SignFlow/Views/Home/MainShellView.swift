@@ -4,6 +4,7 @@
 //
 
 import SwiftUI
+import AdsManagerKit
 
 struct MainShellView: View {
     @EnvironmentObject private var appState: AppState
@@ -29,6 +30,9 @@ struct MainShellView: View {
                 .tag(AppState.MainTab.settings)
         }
         .tint(Theme.primaryText)
+        .onChange(of: appState.selectedTab) { _, _ in
+            AdsManager.shared.showInterstitialIfAvailable()
+        }
         .onAppear {
             let appearance = UITabBarAppearance()
             appearance.configureWithDefaultBackground()

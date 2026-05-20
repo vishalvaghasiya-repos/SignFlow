@@ -7,6 +7,7 @@ import PencilKit
 import SwiftData
 import SwiftUI
 import UIKit
+import AdsManagerKit
 
 struct NewSignatureView: View {
     @Environment(\.colorScheme) private var colorScheme
@@ -129,7 +130,10 @@ struct NewSignatureView: View {
             name: name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "Signature" : name,
             image: image
         )
-        dismiss()
+        AdsManager.shared.showInterstitialIfAvailable()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
+            dismiss()
+        }
     }
 
     private func resolvedInkColor(from color: Color) -> UIColor {

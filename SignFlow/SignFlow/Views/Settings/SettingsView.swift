@@ -5,6 +5,8 @@
 
 import SwiftData
 import SwiftUI
+import AdsManagerKit
+
 
 struct SettingsView: View {
     @EnvironmentObject private var appState: AppState
@@ -14,6 +16,8 @@ struct SettingsView: View {
     @StateObject private var vm = SettingsViewModel()
     @State private var showRestoreAlert = false
     @State private var iCloudSyncToggle = false
+    @State private var bannerIsLoaded = false
+    @State private var bannerHeight: CGFloat = 0
 
     var body: some View {
         NavigationStack {
@@ -179,6 +183,14 @@ struct SettingsView: View {
                     .padding(.horizontal, 20)
                     .padding(.vertical, 18)
                 }
+            }
+            .safeAreaInset(edge: .bottom) {
+                BannerAdView(
+                    adType: .ADAPTIVE,
+                    isLoaded: $bannerIsLoaded,
+                    height: $bannerHeight
+                )
+                .frame(height: bannerHeight)
             }
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.large)

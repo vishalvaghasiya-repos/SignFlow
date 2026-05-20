@@ -7,12 +7,18 @@ import Combine
 import Foundation
 import RevenueCatKit
 internal import RevenueCat
+import AdsManagerKit
+
 
 @MainActor
 final class SubscriptionManager: ObservableObject {
     static let shared = SubscriptionManager()
 
-    @Published private(set) var isPremiumActive = false
+    @Published private(set) var isPremiumActive = false {
+        didSet {
+            AdsManager.setToPremium(isPremiumActive)
+        }
+    }
     @Published private(set) var packageOptions: [PremiumPackageOption] = []
     /// Human-readable lines for Settings (active plans).
     @Published private(set) var planDetailLines: [String] = []
