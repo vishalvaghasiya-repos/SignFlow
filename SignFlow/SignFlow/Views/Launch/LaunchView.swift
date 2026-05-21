@@ -131,11 +131,9 @@ private func fetchFromRemoteConfig(_ completion: @Sendable @escaping () -> Void)
             #endif
             
             let openAdEnabled = config.configValue(forKey: "openAdEnabled").boolValue
-            let openAdOnLaunchEnabled = config.configValue(forKey: "openAdOnLaunchEnabled").boolValue
             let bannerAdEnabled = config.configValue(forKey: "bannerAdEnabled").boolValue
             let interstitialAdEnabled = config.configValue(forKey: "interstitialAdEnabled").boolValue
             let nativeAdEnabled = config.configValue(forKey: "nativeAdEnabled").boolValue
-            let nativeAdPreloadEnabled = config.configValue(forKey: "nativeAdPreloadEnabled").boolValue
             let openAdUnitId = config.configValue(forKey: "openAdUnitId").stringValue
             let bannerAdUnitId = config.configValue(forKey: "bannerAdUnitId").stringValue
             let interstitialAdUnitId = config.configValue(forKey: "interstitialAdUnitId").stringValue

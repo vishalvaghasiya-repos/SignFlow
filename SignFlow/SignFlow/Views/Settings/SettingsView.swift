@@ -18,6 +18,7 @@ struct SettingsView: View {
     @State private var iCloudSyncToggle = false
     @State private var bannerIsLoaded = false
     @State private var bannerHeight: CGFloat = 0
+    @State private var activeWebViewItem: WebViewItem? = nil
 
     var body: some View {
         NavigationStack {
@@ -157,8 +158,12 @@ struct SettingsView: View {
 
                         settingsCard(title: "Support") {
                             row("Rate App", systemImage: "star.fill") { vm.rateApp() }
-                            row("Privacy Policy", systemImage: "hand.raised.fill") { vm.openPrivacy() }
-                            row("Terms of Use", systemImage: "doc.text") { vm.openTerms() }
+                             row("Privacy Policy", systemImage: "hand.raised.fill") {
+                                 activeWebViewItem = WebViewItem(url: AppConstants.URLs.privacy, title: "Privacy Policy")
+                             }
+                             row("Terms of Use", systemImage: "doc.text") {
+                                 activeWebViewItem = WebViewItem(url: AppConstants.URLs.terms, title: "Terms of Use")
+                             }
                             row("Contact Support", systemImage: "envelope.fill") { vm.contactSupport() }
                             row("Restore Purchases", systemImage: "arrow.clockwise.circle") {
                                 Task {
@@ -211,6 +216,9 @@ struct SettingsView: View {
                 Button("OK", role: .cancel) { vm.iCloudSyncError = nil }
             } message: {
                 Text(vm.iCloudSyncError ?? "")
+            }
+            .sheet(item: $activeWebViewItem) { item in
+                AppWebViewScreen(url: item.url, title: item.title)
             }
         }
     }
