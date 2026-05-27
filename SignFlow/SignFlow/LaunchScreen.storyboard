@@ -18,11 +18,8 @@
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Splash" translatesAutoresizingMaskIntoConstraints="NO" id="xp7-ef-GK8">
                                 <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                             </imageView>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Logo" translatesAutoresizingMaskIntoConstraints="NO" id="WW7-Lz-bqX">
-                                <rect key="frame" x="78.666666666666671" y="308" width="235.66666666666663" height="236"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" secondItem="WW7-Lz-bqX" secondAttribute="height" multiplier="1:1" id="cgO-dd-RKp"/>
-                                </constraints>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="splash_logo" translatesAutoresizingMaskIntoConstraints="NO" id="WW7-Lz-bqX">
+                                <rect key="frame" x="103.66666666666669" y="329" width="186" height="194"/>
                             </imageView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="vDu-zF-Fre"/>
@@ -31,7 +28,6 @@
                             <constraint firstItem="WW7-Lz-bqX" firstAttribute="centerX" secondItem="5EZ-qb-Rvc" secondAttribute="centerX" id="32Y-yV-kGk"/>
                             <constraint firstItem="WW7-Lz-bqX" firstAttribute="centerY" secondItem="5EZ-qb-Rvc" secondAttribute="centerY" id="3J5-jf-Xqd"/>
                             <constraint firstItem="xp7-ef-GK8" firstAttribute="top" secondItem="5EZ-qb-Rvc" secondAttribute="top" id="Fjq-0g-ay2"/>
-                            <constraint firstItem="WW7-Lz-bqX" firstAttribute="width" secondItem="5EZ-qb-Rvc" secondAttribute="width" multiplier="0.6" id="Ioe-9O-in5"/>
                             <constraint firstItem="xp7-ef-GK8" firstAttribute="leading" secondItem="vDu-zF-Fre" secondAttribute="leading" id="KFr-6x-dgV"/>
                             <constraint firstItem="xp7-ef-GK8" firstAttribute="trailing" secondItem="vDu-zF-Fre" secondAttribute="trailing" id="cMe-Ci-8XQ"/>
                             <constraint firstAttribute="bottom" secondItem="xp7-ef-GK8" secondAttribute="bottom" id="g88-6F-DfA"/>
@@ -44,7 +40,7 @@
         </scene>
     </scenes>
     <resources>
-        <image name="Logo" width="260" height="260"/>
         <image name="Splash" width="390" height="847"/>
+        <image name="splash_logo" width="186" height="194"/>
     </resources>
 </document>

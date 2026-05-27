@@ -30,30 +30,16 @@ struct LaunchView: View {
             )
             .ignoresSafeArea()
             
-            Circle()
-                .stroke(Color.white.opacity(0.16), lineWidth: 2)
-                .frame(width: 250, height: 250)
-                .rotationEffect(.degrees(ringRotation))
-                .blur(radius: 0.5)
-            
             VStack {
                 Spacer()
                 
-                VStack(spacing: 8) {
-                    Image("splash-Logo")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 140, height: 140)
-                    
-                    Text(AppConstants.appDisplayName)
-                        .font(.system(size: 34, weight: .bold, design: .rounded))
-                        .foregroundStyle(.white)
-                        .multilineTextAlignment(.center)
-                }
-                .padding(.top, 10)
-                .opacity(contentOpacity)
+                Image("splash_logo")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 200)
+                    .opacity(contentOpacity)
                 
-                Spacer(minLength: 120)
+                Spacer()
                 
                 bottomLoader
                     .padding(.bottom, 28)

@@ -13,7 +13,7 @@ enum AppConstants {
         #if DEBUG
         50
         #else
-        5
+        10
         #endif
     }
 

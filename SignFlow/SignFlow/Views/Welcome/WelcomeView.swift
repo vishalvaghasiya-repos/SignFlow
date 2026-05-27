@@ -61,7 +61,7 @@ struct WelcomeView: View {
                 Spacer()
 
                 VStack(spacing: 14) {
-                    PrimaryButton(title: "Start Signing") {
+                    PrimaryButton(title: "Get Started") {
                         withAnimation(.spring()) {
                             appState.hasSeenWelcome = true
                         }

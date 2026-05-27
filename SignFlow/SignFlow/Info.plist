@@ -2,18 +2,14 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>RevenueCatAPIKey</key>
-	<string>appl_xEBbnwqXPvWuvgXxHmQxxPUTBjO</string>
-	<key>RevenueCatEntitlementID</key>
-	<string>premium</string>
-	<key>UIBackgroundModes</key>
-	<array>
-		<string>remote-notification</string>
-	</array>
 	<key>GADApplicationIdentifier</key>
 	<string>ca-app-pub-3041870318883551~4681551422</string>
 	<key>GADNativeAdValidatorEnabled</key>
 	<false/>
+	<key>RevenueCatAPIKey</key>
+	<string>appl_xEBbnwqXPvWuvgXxHmQxxPUTBjO</string>
+	<key>RevenueCatEntitlementID</key>
+	<string>premium</string>
 	<key>SKAdNetworkItems</key>
 	<array>
 		<dict>
@@ -216,6 +212,10 @@
 			<key>SKAdNetworkIdentifier</key>
 			<string>3qcr597p9d.skadnetwork</string>
 		</dict>
+	</array>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
 	</array>
 </dict>
 </plist>

@@ -27,39 +27,8 @@ struct SettingsView: View {
                     .ignoresSafeArea()
 
                 ScrollView {
-                    VStack(spacing: 14) {
-                        settingsCard(title: "Premium") {
-                            if subscription.isPremiumActive {
-                                VStack(alignment: .leading, spacing: 10) {
-                                    Label("Premium active", systemImage: "checkmark.seal.fill")
-                                        .font(.system(.body, design: .rounded).weight(.semibold))
-                                        .foregroundStyle(Theme.primaryText)
-                                    if let summary = subscription.planExpirationSummary {
-                                        Text(summary)
-                                            .font(.system(.subheadline, design: .rounded))
-                                            .foregroundStyle(Theme.secondaryText)
-                                    }
-                                    ForEach(Array(subscription.planDetailLines.enumerated()), id: \.offset) { _, line in
-                                        Text(line)
-                                            .font(.system(.caption, design: .rounded))
-                                            .foregroundStyle(Theme.secondaryText.opacity(0.95))
-                                    }
-                                }
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(.vertical, 4)
-                            } else {
-                                VStack(alignment: .leading, spacing: 12) {
-                                    Text("Unlock unlimited signing and premium benefits.")
-                                        .font(.system(.subheadline, design: .rounded))
-                                        .foregroundStyle(Theme.secondaryText)
-                                        .multilineTextAlignment(.leading)
-                                    PrimaryButton(title: "Upgrade", systemImage: "sparkles") {
-                                        appState.showPremiumPaywall = true
-                                    }
-                                }
-                                .padding(.vertical, 4)
-                            }
-                        }
+                    VStack(spacing: 16) {
+                        planStatusSection()
 
                         settingsCard(title: "iCloud library") {
                             VStack(alignment: .leading, spacing: 12) {
@@ -253,5 +222,168 @@ struct SettingsView: View {
             .padding(.vertical, 10)
         }
         .buttonStyle(.plain)
+    }
+
+    @ViewBuilder
+    private func planStatusSection() -> some View {
+        if subscription.isPremiumActive {
+            VStack(alignment: .leading, spacing: 14) {
+                HStack {
+                    HStack(spacing: 8) {
+                        Image(systemName: "checkmark.seal.fill")
+                            .foregroundStyle(.white)
+                            .font(.system(size: 20, weight: .bold))
+                        Text("SignFlow Premium")
+                            .font(.system(.title3, design: .rounded).weight(.bold))
+                            .foregroundStyle(.white)
+                    }
+                    Spacer()
+                    Text("PRO")
+                        .font(.system(.caption2, design: .rounded).weight(.black))
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 4)
+                        .background(Capsule().fill(Color.white.opacity(0.24)))
+                        .foregroundStyle(.white)
+                }
+                
+                VStack(alignment: .leading, spacing: 6) {
+                    if let summary = subscription.planExpirationSummary {
+                        Text(summary)
+                            .font(.system(.subheadline, design: .rounded).weight(.semibold))
+                            .foregroundStyle(.white.opacity(0.95))
+                    }
+                    
+                    ForEach(subscription.planDetailLines, id: \.self) { line in
+                        Text(line)
+                            .font(.system(.caption, design: .rounded))
+                            .foregroundStyle(.white.opacity(0.85))
+                    }
+                }
+                
+                Divider()
+                    .background(Color.white.opacity(0.3))
+                
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack(spacing: 8) {
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.system(size: 14))
+                        Text("Unlimited document signing")
+                            .font(.system(.caption, design: .rounded).weight(.semibold))
+                    }
+                    HStack(spacing: 8) {
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.system(size: 14))
+                        Text("iCloud synchronization active")
+                            .font(.system(.caption, design: .rounded).weight(.semibold))
+                    }
+                    HStack(spacing: 8) {
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.system(size: 14))
+                        Text("Zero advertisements")
+                            .font(.system(.caption, design: .rounded).weight(.semibold))
+                    }
+                }
+                .foregroundStyle(.white.opacity(0.95))
+            }
+            .padding(18)
+            .background {
+                RoundedRectangle(cornerRadius: 22, style: .continuous)
+                    .fill(Theme.premiumAccentGradient)
+                    .shadow(color: Theme.premiumPurple.opacity(0.3), radius: 12, x: 0, y: 6)
+            }
+        } else {
+            VStack(alignment: .leading, spacing: 14) {
+                HStack {
+                    HStack(spacing: 8) {
+                        Image(systemName: "info.circle.fill")
+                            .foregroundStyle(Theme.accent)
+                            .font(.system(size: 18))
+                        Text("Free Plan")
+                            .font(.system(.headline, design: .rounded).weight(.bold))
+                            .foregroundStyle(Theme.primaryText)
+                    }
+                    Spacer()
+                    Text("ACTIVE")
+                        .font(.system(.caption2, design: .rounded).weight(.bold))
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Capsule().fill(Theme.accent.opacity(0.12)))
+                        .foregroundStyle(Theme.accent)
+                }
+                
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack {
+                        Text("Document Sign Limit")
+                            .font(.system(.subheadline, design: .rounded).weight(.semibold))
+                            .foregroundStyle(Theme.primaryText)
+                        Spacer()
+                        let signaturesLeft = max(0, AppConstants.freeSignLimit - appState.freeSignCount)
+                        Text("\(signaturesLeft) of \(AppConstants.freeSignLimit) left")
+                            .font(.system(.caption, design: .rounded).weight(.bold))
+                            .foregroundStyle(signaturesLeft == 0 ? .red : Theme.secondaryText)
+                    }
+                    
+                    let limit = max(1, AppConstants.freeSignLimit)
+                    let progress = CGFloat(appState.freeSignCount) / CGFloat(limit)
+                    
+                    GeometryReader { geometry in
+                        ZStack(alignment: .leading) {
+                            RoundedRectangle(cornerRadius: 6, style: .continuous)
+                                .fill(Color.primary.opacity(0.08))
+                                .frame(height: 10)
+                            
+                            RoundedRectangle(cornerRadius: 6, style: .continuous)
+                                .fill(
+                                    LinearGradient(
+                                        colors: [Theme.accent, Theme.accent.opacity(0.75)],
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    )
+                                )
+                                .frame(width: max(0, min(geometry.size.width, geometry.size.width * progress)), height: 10)
+                        }
+                    }
+                    .frame(height: 10)
+                    
+                    Text("Signed \(appState.freeSignCount) out of \(AppConstants.freeSignLimit) documents.")
+                        .font(.system(.caption, design: .rounded))
+                        .foregroundStyle(Theme.secondaryText)
+                }
+                
+                Divider()
+                    .background(Color.primary.opacity(0.06))
+                
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("Unlock unlimited document signing, secure iCloud library sync, and remove all ads.")
+                        .font(.system(.subheadline, design: .rounded))
+                        .foregroundStyle(Theme.secondaryText)
+                        .multilineTextAlignment(.leading)
+                        .lineSpacing(2)
+                    
+                    Button {
+                        appState.showPremiumPaywall = true
+                        HapticFeedback.light()
+                    } label: {
+                        HStack(spacing: 8) {
+                            Image(systemName: "sparkles")
+                                .font(.system(size: 16, weight: .bold))
+                            Text("Upgrade to Premium")
+                                .font(.system(.subheadline, design: .rounded).weight(.bold))
+                        }
+                        .foregroundStyle(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
+                        .background {
+                            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                .fill(Theme.premiumAccentGradient)
+                                .shadow(color: Theme.premiumPurple.opacity(0.3), radius: 8, x: 0, y: 4)
+                        }
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            .padding(16)
+            .glassCard(cornerRadius: 22)
+        }
     }
 }
