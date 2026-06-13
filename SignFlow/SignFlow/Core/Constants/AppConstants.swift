@@ -31,9 +31,10 @@ enum AppConstants {
     }
 
     enum URLs {
-        static let privacy = URL(string: "https://sites.google.com/view/privacypolicycenter/privacy-policy")!
-        static let terms = URL(string: "https://sites.google.com/view/privacypolicycenter/terms-conditions")!
-        static let support = URL(string: "mailto:vaghasiya907@gmail.com")!
-        static let appStoreReview = URL(string: "https://apps.apple.com/app/id6768590632?action=write-review")!
+        static let appID = "6768590632"
+        static let privacy = URL(string: "https://sites.google.com/view/jyotivaidya/privacy-policy")!
+        static let terms = URL(string: "https://sites.google.com/view/jyotivaidya/terms-conditions")!
+        static let support = URL(string: "mailto:jyotivaidya97@gmail.com")!
+        static let appStoreReview = URL(string: "https://apps.apple.com/app/id\(appID)?action=write-review")!
     }
 }
