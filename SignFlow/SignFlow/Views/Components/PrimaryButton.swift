@@ -58,39 +58,44 @@ struct PrimaryButton: View {
                 }
                 .foregroundStyle(foregroundTint)
         }
-        .buttonStyle(.plain)
+        .buttonStyle(ScaleButtonStyle())
     }
 
     private var filledFill: Color {
-        colorScheme == .light
-            ? Color(uiColor: .systemGray6)
-            : Color(uiColor: .tertiarySystemFill)
+        Color(red: 0.35, green: 0.34, blue: 0.84)
     }
 
     private var filledStroke: Color {
         colorScheme == .light
-            ? Color.black.opacity(0.12)
-            : Color.white.opacity(0.14)
+            ? Color.black.opacity(0.08)
+            : Color.white.opacity(0.12)
     }
 
     private var filledShadowColor: Color {
-        colorScheme == .light
-            ? Color.black.opacity(0.14)
-            : Color.black.opacity(0.2)
+        Color(red: 0.35, green: 0.34, blue: 0.84).opacity(colorScheme == .light ? 0.3 : 0.45)
     }
 
     private var outlineStroke: Color {
         colorScheme == .light
-            ? Color.primary.opacity(0.35)
-            : Color.white.opacity(0.55)
+            ? Color(red: 0.35, green: 0.34, blue: 0.84)
+            : Color.white.opacity(0.7)
     }
 
     private var foregroundTint: Color {
         switch style {
         case .filled:
-            return Color.primary.opacity(0.92)
+            return .white
         case .outline:
-            return colorScheme == .light ? Color.primary.opacity(0.92) : Color.white
+            return colorScheme == .light ? Color(red: 0.35, green: 0.34, blue: 0.84) : .white
         }
+    }
+}
+
+struct ScaleButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .opacity(configuration.isPressed ? 0.9 : 1.0)
+            .scaleEffect(configuration.isPressed ? 0.97 : 1.0)
+            .animation(.easeOut(duration: 0.12), value: configuration.isPressed)
     }
 }

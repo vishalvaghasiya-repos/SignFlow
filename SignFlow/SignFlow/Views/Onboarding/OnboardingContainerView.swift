@@ -14,7 +14,7 @@ struct OnboardingContainerView: View {
 
     var body: some View {
         ZStack {
-            Theme.primaryGradient
+            screenBackground
                 .ignoresSafeArea()
 
             VStack(spacing: 0) {
@@ -59,12 +59,12 @@ struct OnboardingContainerView: View {
                 HStack(spacing: 8) {
                     ForEach(0 ..< pages.count, id: \.self) { i in
                         Capsule()
-                            .fill(i == pageIndex ? Theme.primaryText : Theme.primaryText.opacity(0.28))
+                            .fill(i == pageIndex ? Theme.accent : Theme.accent.opacity(0.24))
                             .frame(width: i == pageIndex ? 22 : 8, height: 8)
                             .animation(.spring(response: 0.35), value: pageIndex)
                     }
                 }
-                .padding(.bottom, 12)
+                .padding(.bottom, 24)
 
                 PrimaryButton(title: pageIndex == pages.count - 1 ? "Get Started" : "Continue") {
                     if pageIndex < pages.count - 1 {
@@ -77,8 +77,8 @@ struct OnboardingContainerView: View {
                         }
                     }
                 }
-                .padding(.horizontal, 20)
-                .padding(.bottom, 28)
+                .padding(.horizontal, 24)
+                .padding(.bottom, 34)
             }
         }
     }
@@ -102,6 +102,24 @@ struct OnboardingContainerView: View {
     private var skipShadowColor: Color {
         Color.black.opacity(0.1)
     }
+
+    private var screenBackground: some View {
+        LinearGradient(
+            colors: colorScheme == .light
+                ? [
+                    Color(red: 0.94, green: 0.91, blue: 0.98),
+                    Color(red: 0.91, green: 0.93, blue: 0.98),
+                    Color(red: 0.97, green: 0.95, blue: 0.98)
+                  ]
+                : [
+                    Color(red: 0.06, green: 0.05, blue: 0.12),
+                    Color(red: 0.09, green: 0.07, blue: 0.16),
+                    Color(red: 0.03, green: 0.02, blue: 0.06)
+                  ],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+    }
 }
 
 private struct OnboardingPageView: View {
@@ -111,41 +129,61 @@ private struct OnboardingPageView: View {
     @State private var appeared = false
 
     var body: some View {
-        VStack(spacing: 28) {
+        VStack(spacing: 24) {
             Spacer()
 
             ZStack {
-                RoundedRectangle(cornerRadius: 36, style: .continuous)
-                    .fill(colorScheme == .dark ? Color.white.opacity(0.14) : Color.primary.opacity(0.06))
-                    .frame(height: 280)
+                RoundedRectangle(cornerRadius: 32, style: .continuous)
+                    .fill(
+                        colorScheme == .light
+                            ? Color.white.opacity(0.55)
+                            : Color.white.opacity(0.06)
+                    )
+                    .frame(height: 340)
                     .overlay {
-                        RoundedRectangle(cornerRadius: 36, style: .continuous)
-                            .stroke(colorScheme == .dark ? Color.white.opacity(0.28) : Color.primary.opacity(0.12), lineWidth: 1)
+                        RoundedRectangle(cornerRadius: 32, style: .continuous)
+                            .stroke(
+                                colorScheme == .light
+                                    ? Color.white.opacity(0.7)
+                                    : Color.white.opacity(0.15),
+                                lineWidth: 1.5
+                            )
                     }
-                    .shadow(color: .black.opacity(0.12), radius: 24, x: 0, y: 14)
+                    .shadow(
+                        color: colorScheme == .light
+                            ? Color.black.opacity(0.05)
+                            : Color.black.opacity(0.25),
+                        radius: 20,
+                        x: 0,
+                        y: 10
+                    )
 
-                Image(systemName: page.systemImage)
-                    .font(.system(size: 72, weight: .medium))
-                    .foregroundStyle(colorScheme == .dark ? Color.white : Color.primary)
-                    .symbolRenderingMode(.hierarchical)
-                    .scaleEffect(appeared ? 1 : 0.85)
+                Image(page.imageName)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(maxHeight: 4/00)
+                    .padding(16)
+                    .scaleEffect(appeared ? 1 : 0.88)
                     .opacity(appeared ? 1 : 0)
             }
 
-            VStack(alignment: .leading, spacing: 12) {
+            Spacer()
+
+            VStack(spacing: 12) {
                 Text(page.title)
                     .font(.system(.title, design: .rounded).weight(.bold))
                     .foregroundStyle(Theme.primaryText)
-                    .multilineTextAlignment(.leading)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .multilineTextAlignment(.center)
+                    .frame(maxWidth: .infinity)
 
                 Text(page.subtitle)
                     .font(.system(.body, design: .rounded))
                     .foregroundStyle(Theme.secondaryText)
-                    .multilineTextAlignment(.leading)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 16)
+                    .frame(maxWidth: .infinity)
             }
-            .padding(.horizontal, 4)
+            .padding(.horizontal, 8)
             .offset(y: appeared ? 0 : 12)
             .opacity(appeared ? 1 : 0)
 
@@ -160,4 +198,15 @@ private struct OnboardingPageView: View {
             appeared = false
         }
     }
+}
+
+#Preview("Light") {
+    OnboardingContainerView()
+        .environmentObject(AppState())
+}
+
+#Preview("Dark") {
+    OnboardingContainerView()
+        .environmentObject(AppState())
+        .preferredColorScheme(.dark)
 }
