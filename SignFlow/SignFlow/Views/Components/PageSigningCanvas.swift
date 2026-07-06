@@ -24,7 +24,7 @@ struct PageSigningCanvas: View {
     var committedStamps: [CommittedStampPreview] = []
     var onCancel: (() -> Void)?
 
-    @GestureState private var dragTranslation: CGSize = .zero
+    @State private var dragOffset: CGSize = .zero
     @State private var liveScale: CGFloat = 1
     @State private var liveRotation: Angle = .zero
 
@@ -83,13 +83,13 @@ struct PageSigningCanvas: View {
                 .scaledToFit()
                 .frame(width: w, height: h)
                 .contentShape(Rectangle())
-                .shadow(color: .black.opacity(0.2), radius: 6, x: 0, y: 3)
+                .shadow(color: .black.opacity(0.18), radius: 8, x: 0, y: 4)
                 .rotationEffect(.degrees(rotationDegrees) + liveRotation)
                 .scaleEffect(liveScale)
                 .overlay {
-                    stickerBorder
-                        .stroke(Color.white.opacity(0.95), lineWidth: 2.5)
-                        .shadow(color: .black.opacity(0.4), radius: 2, x: 0, y: 1)
+                    PremiumSelectionBorder()
+                        .rotationEffect(.degrees(rotationDegrees) + liveRotation)
+                        .scaleEffect(liveScale)
                 }
                 .simultaneousGesture(dragGesture(canvasSize: canvasSize))
                 .simultaneousGesture(magnificationGesture())
@@ -100,17 +100,28 @@ struct PageSigningCanvas: View {
             Button {
                 onCancel?()
             } label: {
-                Image(systemName: "xmark.circle.fill")
-                    .symbolRenderingMode(.palette)
-                    .foregroundStyle(.white, .red)
-                    .font(.system(size: 22))
-                    .background(Circle().fill(.ultraThinMaterial))
+                ZStack {
+                    Circle()
+                        .fill(Color.black.opacity(0.72))
+                        .frame(width: 22, height: 22)
+                        .overlay(
+                            Circle()
+                                .stroke(Color.white.opacity(0.25), lineWidth: 1)
+                        )
+                        .shadow(color: .black.opacity(0.3), radius: 2.5, x: 0, y: 1.5)
+                    
+                    Image(systemName: "xmark")
+                        .font(.system(size: 9, weight: .bold))
+                        .foregroundStyle(.white)
+                }
+                .frame(width: 44, height: 44)
+                .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-            .offset(x: 10, y: -10)
+            .offset(x: 18, y: -18)
         }
         .position(x: cx, y: cy)
-        .offset(dragTranslation)
+        .offset(dragOffset)
         .transaction { txn in
             txn.animation = nil
             txn.disablesAnimations = true
@@ -119,8 +130,8 @@ struct PageSigningCanvas: View {
 
     private func dragGesture(canvasSize: CGSize) -> some Gesture {
         DragGesture(minimumDistance: 0)
-            .updating($dragTranslation) { value, state, _ in
-                state = value.translation
+            .onChanged { value in
+                dragOffset = value.translation
             }
             .onEnded { value in
                 let dx = value.translation.width / max(canvasSize.width, 1)
@@ -128,7 +139,10 @@ struct PageSigningCanvas: View {
                 var next = normalizedRect
                 next.origin.x = clamp(next.origin.x + dx, min: 0, max: 1 - next.width)
                 next.origin.y = clamp(next.origin.y + dy, min: 0, max: 1 - next.height)
-                normalizedRect = next
+                withAnimation(.interactiveSpring(response: 0.28, dampingFraction: 0.82, blendDuration: 0)) {
+                    normalizedRect = next
+                    dragOffset = .zero
+                }
             }
     }
 
@@ -140,12 +154,14 @@ struct PageSigningCanvas: View {
             .onEnded { value in
                 let clamped = clamp(value, min: 0.5, max: 2.0)
                 var next = normalizedRect
-                next.size.width = clamp(next.width * clamped, min: 0.08, max: 0.9)
-                next.size.height = clamp(next.height * clamped, min: 0.04, max: 0.6)
+                next.size.width = clamp(next.width * clamped, min: 0.05, max: 0.9)
+                next.size.height = clamp(next.height * clamped, min: 0.02, max: 0.6)
                 next.origin.x = clamp(next.origin.x, min: 0, max: 1 - next.width)
                 next.origin.y = clamp(next.origin.y, min: 0, max: 1 - next.height)
-                normalizedRect = next
-                liveScale = 1
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.75)) {
+                    normalizedRect = next
+                    liveScale = 1
+                }
             }
     }
 
@@ -155,12 +171,57 @@ struct PageSigningCanvas: View {
                 liveRotation = value
             }
             .onEnded { value in
-                rotationDegrees += value.degrees
-                liveRotation = .zero
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.75)) {
+                    rotationDegrees += value.degrees
+                    liveRotation = .zero
+                }
             }
     }
 
     private func clamp(_ v: CGFloat, min: CGFloat, max: CGFloat) -> CGFloat {
         Swift.min(Swift.max(v, min), max)
+    }
+}
+
+struct PremiumSelectionBorder: View {
+    var body: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 6, style: .continuous)
+                .stroke(
+                    LinearGradient(
+                        colors: [Theme.premiumPurple, Theme.premiumPink, Theme.premiumCyan],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ),
+                    lineWidth: 1.8
+                )
+                .shadow(color: Theme.premiumPurple.opacity(0.3), radius: 3, x: 0, y: 1.5)
+            
+            VStack {
+                HStack {
+                    handleDot
+                    Spacer()
+                    handleDot
+                }
+                Spacer()
+                HStack {
+                    handleDot
+                    Spacer()
+                    handleDot
+                }
+            }
+            .padding(-4)
+        }
+    }
+    
+    private var handleDot: some View {
+        Circle()
+            .fill(Color.white)
+            .frame(width: 8, height: 8)
+            .overlay(
+                Circle()
+                    .stroke(Theme.premiumPurple, lineWidth: 1.5)
+            )
+            .shadow(color: .black.opacity(0.18), radius: 1, x: 0, y: 0.5)
     }
 }

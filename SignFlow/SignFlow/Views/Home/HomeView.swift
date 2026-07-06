@@ -17,19 +17,19 @@ private struct PDFSignSession: Identifiable {
 struct HomeView: View {
     @Environment(\.modelContext) private var modelContext
     @EnvironmentObject private var appState: AppState
+    @EnvironmentObject private var router: AppRouter
     @StateObject private var vm = HomeViewModel()
 
     @State private var showImporter = false
     @State private var pickedURL: URL?
     @State private var signSession: PDFSignSession?
-    @State private var previewDoc: SignedDocumentModel?
     @State private var showSignatures = false
     @State private var showNewSignature = false
     @State private var nativeIsLoaded = false
     @State private var nativeHeight: CGFloat = AdType.MEDIUM.height
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $router.homePath) {
             ZStack(alignment: .bottomTrailing) {
                 ScrollView {
                     VStack(alignment: .leading, spacing: 20) {
@@ -72,6 +72,22 @@ struct HomeView: View {
                     .tint(Theme.primaryText)
                 }
             }
+            .navigationDestination(for: AppRoute.self) { route in
+                switch route {
+                case .signatureLibrary:
+                    SignatureLibraryView()
+                case .newSignature:
+                    NewSignatureView()
+                case .pdfSigning(let url):
+                    PDFSigningView(sourceURL: url) {
+                        router.pop(on: .home)
+                    }
+                case .pdfPreview(let doc):
+                    SignedPDFPreviewView(document: doc)
+                case .webView(let url, let title):
+                    AppWebViewScreen(url: url, title: title)
+                }
+            }
         }
         .onAppear {
             vm.attach(context: modelContext)
@@ -84,33 +100,18 @@ struct HomeView: View {
                 vm.refresh()
             }
         }
+        .onChange(of: router.homePath) { _, path in
+            if path.isEmpty {
+                vm.refresh()
+            }
+        }
         .onChange(of: pickedURL) { _, url in
             guard let url else { return }
-            signSession = PDFSignSession(url: url)
+            router.push(.pdfSigning(url), on: .home)
             pickedURL = nil
         }
         .sheet(isPresented: $showImporter) {
             DocumentPicker(pickedURL: $pickedURL)
-        }
-        .fullScreenCover(item: $signSession) { session in
-            PDFSigningContainerView(sourceURL: session.url) {
-                signSession = nil
-                vm.refresh()
-            }
-            .environmentObject(appState)
-        }
-        .fullScreenCover(item: $previewDoc) { doc in
-            SignedPDFPreviewView(document: doc) { previewDoc = nil }
-        }
-        .sheet(isPresented: $showSignatures, onDismiss: {
-            vm.refresh()
-        }) {
-            SignatureLibraryView()
-        }
-        .sheet(isPresented: $showNewSignature, onDismiss: {
-            vm.refresh()
-        }) {
-            NewSignatureView()
         }
     }
 
@@ -146,13 +147,15 @@ struct HomeView: View {
                     .font(.system(.headline, design: .rounded).weight(.semibold))
                     .foregroundStyle(Theme.primaryText)
                 Spacer()
-                Button("See all") { showSignatures = true }
+                Button("See all") {
+                    router.push(.signatureLibrary, on: .home)
+                }
                     .font(.system(.subheadline, design: .rounded).weight(.semibold))
                     .foregroundStyle(Theme.primaryText)
             }
 
             Button {
-                showNewSignature = true
+                router.push(.newSignature, on: .home)
             } label: {
                 HStack {
                     Image(systemName: "plus.circle.fill")
@@ -188,7 +191,7 @@ struct HomeView: View {
             } else {
                 ForEach(vm.recentDocuments) { doc in
                     DocumentRowCard(doc: doc) {
-                        previewDoc = doc
+                        router.push(.pdfPreview(doc), on: .home)
                     }
                 }
             }

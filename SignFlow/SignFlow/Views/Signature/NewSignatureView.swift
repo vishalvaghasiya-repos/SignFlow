@@ -19,6 +19,8 @@ struct NewSignatureView: View {
     @State private var name = "My signature"
     @State private var signatureColor: Color = .black
     @State private var signatureUIColor: UIColor = .black
+    @State private var bannerIsLoaded = false
+    @State private var bannerHeight: CGFloat = 0
 
     private let colorPresets: [(color: Color, ui: UIColor)] = [
         (.black, .black),
@@ -29,7 +31,7 @@ struct NewSignatureView: View {
     ]
 
     var body: some View {
-        NavigationStack {
+        ScrollView(.vertical, showsIndicators: false) {
             VStack(spacing: 16) {
                 ZStack {
                     RoundedRectangle(cornerRadius: 18, style: .continuous)
@@ -60,26 +62,28 @@ struct NewSignatureView: View {
 
                     Spacer()
                 }
-
-                Spacer()
             }
             .padding(20)
-            .navigationTitle("New signature")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(.visible, for: .navigationBar)
-            .toolbarBackground(colorScheme == .dark ? Color.black.opacity(0.92) : Color(uiColor: .systemBackground), for: .navigationBar)
-            .toolbarColorScheme(colorScheme == .dark ? .dark : .light, for: .navigationBar)
-            .tint(.primary)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Close") { dismiss() }
-                        .foregroundStyle(.primary)
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") { save() }
-                        .fontWeight(.semibold)
-                        .foregroundStyle(.primary)
-                }
+        }
+        .safeAreaInset(edge: .bottom) {
+            BannerAdView(
+                adType: .ADAPTIVE,
+                isLoaded: $bannerIsLoaded,
+                height: $bannerHeight
+            )
+            .frame(height: bannerHeight)
+        }
+        .navigationTitle("New signature")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.visible, for: .navigationBar)
+        .toolbarBackground(colorScheme == .dark ? Color.black.opacity(0.92) : Color(uiColor: .systemBackground), for: .navigationBar)
+        .toolbarColorScheme(colorScheme == .dark ? .dark : .light, for: .navigationBar)
+        .tint(.primary)
+        .toolbar {
+            ToolbarItem(placement: .confirmationAction) {
+                Button("Save") { save() }
+                    .fontWeight(.semibold)
+                    .foregroundStyle(.primary)
             }
         }
         .onAppear { vm.attach(context: modelContext) }
@@ -113,7 +117,7 @@ struct NewSignatureView: View {
                                         preset.color == signatureColor ? Color.primary : Color.clear,
                                         lineWidth: 2
                                     )
-                            }
+                             }
                     }
                     .buttonStyle(.plain)
                 }

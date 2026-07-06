@@ -11,15 +11,15 @@ import AdsManagerKit
 struct HistoryView: View {
     @Environment(\.modelContext) private var modelContext
     @EnvironmentObject private var appState: AppState
+    @EnvironmentObject private var router: AppRouter
     @StateObject private var vm = HistoryViewModel()
 
-    @State private var previewDoc: SignedDocumentModel?
     @State private var pendingDeleteDoc: SignedDocumentModel?
     @State private var bannerIsLoaded = false
     @State private var bannerHeight: CGFloat = 0
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $router.historyPath) {
             ZStack {
                 Theme.primaryGradient
                     .ignoresSafeArea()
@@ -33,7 +33,7 @@ struct HistoryView: View {
                             LazyVStack(spacing: 14) {
                                 ForEach(vm.filtered) { doc in
                                     HistoryRow(doc: doc) {
-                                        previewDoc = doc
+                                        router.push(.pdfPreview(doc), on: .history)
                                     } onDelete: {
                                         pendingDeleteDoc = doc
                                     }
@@ -56,15 +56,20 @@ struct HistoryView: View {
             .navigationTitle("History")
             .navigationBarTitleDisplayMode(.large)
             .toolbarColorScheme(.light, for: .navigationBar)
+            .navigationDestination(for: AppRoute.self) { route in
+                switch route {
+                case .pdfPreview(let doc):
+                    SignedPDFPreviewView(document: doc)
+                default:
+                    EmptyView()
+                }
+            }
         }
         .onAppear { vm.attach(context: modelContext) }
         .onChange(of: appState.selectedTab) { _, tab in
             if tab == .history {
                 vm.reload()
             }
-        }
-        .fullScreenCover(item: $previewDoc) { doc in
-            SignedPDFPreviewView(document: doc) { previewDoc = nil }
         }
         .alert("Delete Signed PDF?", isPresented: Binding(
             get: { pendingDeleteDoc != nil },

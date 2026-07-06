@@ -83,59 +83,48 @@ struct AppWebViewScreen: View {
     @State private var bannerHeight: CGFloat = 0
 
     var body: some View {
-        NavigationStack {
-            ZStack {
-                Theme.primaryGradient
-                    .ignoresSafeArea()
+        ZStack {
+            Theme.primaryGradient
+                .ignoresSafeArea()
 
-                VStack(spacing: 0) {
-                    if let error = error {
-                        VStack(spacing: 16) {
-                            Image(systemName: "exclamationmark.triangle.fill")
-                                .font(.system(size: 44))
-                                .foregroundStyle(.red)
-                            Text("Failed to load page")
-                                .font(.headline)
-                            Text(error.localizedDescription)
-                                .font(.subheadline)
-                                .foregroundStyle(Theme.secondaryText)
-                                .multilineTextAlignment(.center)
-                                .padding(.horizontal)
-                        }
-                        .padding()
-                        .frame(maxHeight: .infinity)
-                    } else {
-                        WebView(url: url, isLoading: $isLoading, error: $error)
-                            .opacity(isLoading ? 0 : 1)
-                            .overlay {
-                                if isLoading {
-                                    ProgressView("Loading…")
-                                        .font(.system(.subheadline, design: .rounded))
-                                        .foregroundStyle(Theme.primaryText)
-                                }
+            VStack(spacing: 0) {
+                if let error = error {
+                    VStack(spacing: 16) {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .font(.system(size: 44))
+                            .foregroundStyle(.red)
+                        Text("Failed to load page")
+                            .font(.headline)
+                        Text(error.localizedDescription)
+                            .font(.subheadline)
+                            .foregroundStyle(Theme.secondaryText)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal)
+                    }
+                    .padding()
+                    .frame(maxHeight: .infinity)
+                } else {
+                    WebView(url: url, isLoading: $isLoading, error: $error)
+                        .opacity(isLoading ? 0 : 1)
+                        .overlay {
+                            if isLoading {
+                                ProgressView("Loading…")
+                                    .font(.system(.subheadline, design: .rounded))
+                                    .foregroundStyle(Theme.primaryText)
                             }
-                    }
+                        }
                 }
             }
-            .navigationTitle(title)
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Done") {
-                        dismiss()
-                    }
-                    .font(.system(.body, design: .rounded).weight(.semibold))
-                    .foregroundStyle(Theme.primaryText)
-                }
-            }
-            .safeAreaInset(edge: .bottom) {
-                BannerAdView(
-                    adType: .ADAPTIVE,
-                    isLoaded: $bannerIsLoaded,
-                    height: $bannerHeight
-                )
-                .frame(height: bannerHeight)
-            }
+        }
+        .navigationTitle(title)
+        .navigationBarTitleDisplayMode(.inline)
+        .safeAreaInset(edge: .bottom) {
+            BannerAdView(
+                adType: .ADAPTIVE,
+                isLoaded: $bannerIsLoaded,
+                height: $bannerHeight
+            )
+            .frame(height: bannerHeight)
         }
     }
 }

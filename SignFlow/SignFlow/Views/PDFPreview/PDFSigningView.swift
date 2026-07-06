@@ -8,15 +8,14 @@ import SwiftData
 import SwiftUI
 import AdsManagerKit
 
-
 struct PDFSigningView: View {
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.modelContext) private var modelContext
     @EnvironmentObject private var appState: AppState
+    @EnvironmentObject private var router: AppRouter
 
     @StateObject private var vm: PDFPreviewViewModel
     @State private var showSignaturePicker = false
-    @State private var documentToPreview: SignedDocumentModel?
     @State private var signatureSize: Double = 1.0
     @State private var displayName: String
 
@@ -29,69 +28,57 @@ struct PDFSigningView: View {
     }
 
     var body: some View {
-        NavigationStack {
-            ZStack {
-                Theme.primaryGradient
-                    .ignoresSafeArea()
+        ZStack {
+            Theme.primaryGradient
+                .ignoresSafeArea()
 
-                VStack(spacing: 16) {
-                    pageControls
+            VStack(spacing: 16) {
+                pageControls
 
-                    if let doc = vm.document, vm.pageCount > 0,
-                       let thumb = PDFManager.renderPageThumbnail(
-                           document: doc,
-                           pageIndex: vm.currentPageIndex,
-                           maxWidth: UIScreen.main.bounds.width - 40
-                       )
-                    {
-                        PageSigningCanvas(
-                            thumbnail: thumb,
-                            normalizedRect: $vm.overlayNormalizedRect,
-                            signature: vm.signatureImage,
-                            rotationDegrees: Binding(
-                                get: { vm.currentRotation },
-                                set: { vm.currentRotation = $0 }
-                            ),
-                            committedStamps: vm.committedStampPreviews(forPage: vm.currentPageIndex),
-                            onCancel: {
-                                vm.clearWorkingSignatureOnCurrentPage()
-                            }
-                        )
-                        .id(vm.currentPageIndex)
-                        .frame(height: min(420, UIScreen.main.bounds.height * 0.48))
-                        .glassCard(cornerRadius: 22)
-                    } else {
-                        Text("Could not load PDF preview.")
-                            .font(.system(.subheadline, design: .rounded))
-                            .foregroundStyle(Theme.primaryText)
-                            .multilineTextAlignment(.center)
-                            .padding()
-                    }
+                if let thumb = vm.currentPageThumbnail {
+                    PageSigningCanvas(
+                        thumbnail: thumb,
+                        normalizedRect: $vm.overlayNormalizedRect,
+                        signature: vm.signatureImage,
+                        rotationDegrees: Binding(
+                            get: { vm.currentRotation },
+                            set: { vm.currentRotation = $0 }
+                        ),
+                        committedStamps: vm.committedStampPreviews(forPage: vm.currentPageIndex),
+                        onCancel: {
+                            vm.clearWorkingSignatureOnCurrentPage()
+                        }
+                    )
+                    .id(vm.currentPageIndex)
+                    .frame(height: min(420, UIScreen.main.bounds.height * 0.48))
+                    .glassCard(cornerRadius: 22)
+                } else {
+                    Text("Could not load PDF preview.")
+                        .font(.system(.subheadline, design: .rounded))
+                        .foregroundStyle(Theme.primaryText)
+                    Spacer()
+                }
 
+                ScrollView {
                     controls
                 }
-                .padding(.horizontal, 20)
-                .padding(.top, 10)
             }
-            .navigationTitle("Sign PDF")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(.visible, for: .navigationBar)
-            .toolbarBackground(colorScheme == .dark ? Color.black.opacity(0.9) : Color(uiColor: .systemBackground), for: .navigationBar)
-            .toolbarColorScheme(colorScheme == .dark ? .dark : .light, for: .navigationBar)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Close") { onClose() }
-                        .foregroundStyle(.primary)
-                }
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button("Open preview") {
-                        if let doc = vm.lastSavedDocument {
-                            documentToPreview = doc
-                        }
+            .padding(.horizontal, 20)
+        }
+        .navigationTitle("Sign PDF")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.visible, for: .navigationBar)
+        .toolbarBackground(colorScheme == .dark ? Color.black.opacity(0.9) : Color(uiColor: .systemBackground), for: .navigationBar)
+        .toolbarColorScheme(colorScheme == .dark ? .dark : .light, for: .navigationBar)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button("Open preview") {
+                    if let doc = vm.lastSavedDocument {
+                        router.push(.pdfPreview(doc), on: appState.selectedTab)
                     }
-                    .disabled(vm.lastSavedDocument == nil)
-                    .foregroundStyle(.primary.opacity(vm.lastSavedDocument == nil ? 0.45 : 1))
                 }
+                .disabled(vm.lastSavedDocument == nil)
+                .foregroundStyle(.primary.opacity(vm.lastSavedDocument == nil ? 0.45 : 1))
             }
         }
         .onAppear {
@@ -111,12 +98,6 @@ struct PDFSigningView: View {
                 vm.resetOverlayPosition()
                 applySignatureScale()
                 showSignaturePicker = false
-            }
-        }
-        .fullScreenCover(item: $documentToPreview) { doc in
-            SignedPDFPreviewView(document: doc) {
-                documentToPreview = nil
-                onClose()
             }
         }
         .alert("Error", isPresented: Binding(
@@ -191,7 +172,7 @@ struct PDFSigningView: View {
                 Text("Signature size")
                     .font(.system(.caption, design: .rounded).weight(.semibold))
                     .foregroundStyle(Theme.secondaryText)
-                Slider(value: $signatureSize, in: 0.55 ... 1.65, step: 0.05)
+                Slider(value: $signatureSize, in: 0.15 ... 1.50, step: 0.05)
                     .tint(Theme.primaryText)
             }
 
@@ -211,7 +192,14 @@ struct PDFSigningView: View {
                         }
                         if let saved = vm.lastSavedDocument {
                             AdsManager.shared.showInterstitialIfAvailable()
-                            documentToPreview = saved
+                            let currentTab = appState.selectedTab
+                            if currentTab == .home {
+                                if !router.homePath.isEmpty { router.homePath.removeLast() }
+                                router.push(.pdfPreview(saved), on: .home)
+                            } else if currentTab == .history {
+                                if !router.historyPath.isEmpty { router.historyPath.removeLast() }
+                                router.push(.pdfPreview(saved), on: .history)
+                            }
                         }
                     }
                 }
@@ -225,8 +213,8 @@ struct PDFSigningView: View {
     private func applySignatureScale() {
         guard vm.signatureImage != nil else { return }
         let v = CGFloat(signatureSize)
-        let w = clamp(0.32 * v, min: 0.1, max: 0.78)
-        let h = clamp(w * 0.38, min: 0.06, max: 0.5)
+        let w = clamp(0.32 * v, min: 0.04, max: 0.78)
+        let h = clamp(w * 0.38, min: 0.015, max: 0.5)
         var r = vm.overlayNormalizedRect
         let c = CGPoint(x: r.midX, y: r.midY)
         r.size = CGSize(width: w, height: h)
@@ -237,7 +225,7 @@ struct PDFSigningView: View {
         vm.overlayNormalizedRect = r
     }
 
-    private func clamp(_ v: CGFloat, min: CGFloat, max: CGFloat) -> CGFloat {
-        Swift.min(Swift.max(v, min), max)
+    private func clamp<T: Comparable>(_ value: T, min minimum: T, max maximum: T) -> T {
+        min(max(value, minimum), maximum)
     }
 }

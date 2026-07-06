@@ -12,8 +12,17 @@ import UIKit
 @MainActor
 final class PDFPreviewViewModel: ObservableObject {
     @Published var sourceURL: URL
-    @Published var document: PDFDocument?
-    @Published var currentPageIndex: Int = 0
+    @Published var document: PDFDocument? {
+        didSet {
+            loadCurrentPageThumbnail()
+        }
+    }
+    @Published var currentPageIndex: Int = 0 {
+        didSet {
+            loadCurrentPageThumbnail()
+        }
+    }
+    @Published var currentPageThumbnail: UIImage?
     @Published var placements: [PDFSignaturePlacement] = []
     @Published var placementRotationByPage: [Int: Double] = [:]
     @Published var selectedSignature: SignatureModel?
@@ -28,6 +37,16 @@ final class PDFPreviewViewModel: ObservableObject {
     init(url: URL) {
         sourceURL = url
         document = PDFManager.loadDocument(at: url)
+        loadCurrentPageThumbnail()
+    }
+
+    func loadCurrentPageThumbnail() {
+        guard let doc = document, pageCount > 0 else {
+            currentPageThumbnail = nil
+            return
+        }
+        let maxWidth = UIScreen.main.bounds.width - 40
+        currentPageThumbnail = PDFManager.renderPageThumbnail(document: doc, pageIndex: currentPageIndex, maxWidth: maxWidth)
     }
 
     func attach(context: ModelContext) {

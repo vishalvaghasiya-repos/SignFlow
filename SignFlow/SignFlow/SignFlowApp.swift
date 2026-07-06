@@ -23,6 +23,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 @main
 struct SignFlowApp: App {
     @StateObject private var appState = AppState()
+    @StateObject private var router = AppRouter()
     
     // register app delegate for Firebase setup
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
@@ -51,6 +52,7 @@ struct SignFlowApp: App {
         WindowGroup {
             RootCoordinatorView()
                 .environmentObject(appState)
+                .environmentObject(router)
                 .onChange(of: scenePhase) { _, newPhase in
                     if newPhase == .active {
                         if !hasLaunched {

@@ -10,6 +10,7 @@ import AdsManagerKit
 
 struct SettingsView: View {
     @EnvironmentObject private var appState: AppState
+    @EnvironmentObject private var router: AppRouter
     @Environment(\.modelContext) private var modelContext
     @ObservedObject private var subscription = SubscriptionManager.shared
     @ObservedObject private var cloudSync = CloudSyncStatus.shared
@@ -21,7 +22,7 @@ struct SettingsView: View {
     @State private var activeWebViewItem: WebViewItem? = nil
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $router.settingsPath) {
             ZStack {
                 Theme.primaryGradient
                     .ignoresSafeArea()
@@ -126,14 +127,17 @@ struct SettingsView: View {
                         }
 
                         settingsCard(title: "Support") {
-                            row("Rate App", systemImage: "star.fill") { vm.rateApp() }
+                             row("Rate App", systemImage: "star.fill") { vm.rateApp() }
                              row("Privacy Policy", systemImage: "hand.raised.fill") {
-                                 activeWebViewItem = WebViewItem(url: AppConstants.URLs.privacy, title: "Privacy Policy")
+                                 router.push(.webView(url: AppConstants.URLs.privacy, title: "Privacy Policy"), on: .settings)
                              }
                              row("Terms of Use", systemImage: "doc.text") {
-                                 activeWebViewItem = WebViewItem(url: AppConstants.URLs.terms, title: "Terms of Use")
+                                 router.push(.webView(url: AppConstants.URLs.terms, title: "Terms of Use"), on: .settings)
                              }
-                            row("Contact Support", systemImage: "envelope.fill") { vm.contactSupport() }
+                             row("Contact Support", systemImage: "envelope.fill") { vm.contactSupport() }
+                             row("Feedback", systemImage: "bubble.left.and.bubble.right.fill") {
+                                 router.push(.webView(url: AppConstants.URLs.feedback, title: "Feedback"), on: .settings)
+                             }
                             row("Restore Purchases", systemImage: "arrow.clockwise.circle") {
                                 Task {
                                     await vm.restorePurchases()
@@ -186,8 +190,13 @@ struct SettingsView: View {
             } message: {
                 Text(vm.iCloudSyncError ?? "")
             }
-            .sheet(item: $activeWebViewItem) { item in
-                AppWebViewScreen(url: item.url, title: item.title)
+            .navigationDestination(for: AppRoute.self) { route in
+                switch route {
+                case .webView(let url, let title):
+                    AppWebViewScreen(url: url, title: title)
+                default:
+                    EmptyView()
+                }
             }
         }
     }
